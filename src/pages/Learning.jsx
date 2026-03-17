@@ -250,6 +250,21 @@ export default function Learning() {
           <p className="text-slate-500 mt-1 text-sm">Your career path and study plan.</p>
         </div>
 
+        {/* Battles banner */}
+        <button
+          onClick={() => navigate('/learning/battles')}
+          className="w-full mb-6 flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 hover:bg-amber-100 rounded-2xl px-5 py-4 transition-colors cursor-pointer text-left"
+        >
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">⚔️</span>
+            <div>
+              <p className="text-sm font-bold text-amber-900">Learning Battles</p>
+              <p className="text-xs text-amber-700">Test your knowledge with interactive challenges</p>
+            </div>
+          </div>
+          <span className="text-amber-600 text-sm font-semibold shrink-0">Start →</span>
+        </button>
+
         {/* Paths */}
         {paths.length === 0 ? (
           <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-10 text-center">

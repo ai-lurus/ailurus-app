@@ -52,12 +52,20 @@ export default function DeveloperHome() {
             {greeting()}{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
           </h1>
           <p className="text-slate-500 mt-1 text-sm">Here's what's on your plate today.</p>
-          <button
-            onClick={() => navigate('/learning')}
-            className="mt-3 text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 transition-colors cursor-pointer"
-          >
-            Your career plan →
-          </button>
+          <div className="mt-3 flex items-center gap-4">
+            <button
+              onClick={() => navigate('/learning')}
+              className="text-sm text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              Your career plan →
+            </button>
+            <button
+              onClick={() => navigate('/learning/battles')}
+              className="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 transition-colors cursor-pointer"
+            >
+              ⚔️ Learning Battles →
+            </button>
+          </div>
         </div>
 
         {/* Top row: check-in (left) + tasks (right) */}
