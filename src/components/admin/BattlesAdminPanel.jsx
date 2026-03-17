@@ -6,6 +6,7 @@ import {
   getBattlePaths, createBattlePath, updateBattlePath, deleteBattlePath,
   assignBattlePath, unassignBattlePath,
   addTopicToPath, removeTopicFromPath,
+  getUserBattleProgress,
 } from '../../api/battles.js'
 
 // ── Shared styles ──────────────────────────────────────────────────────────────
@@ -16,9 +17,10 @@ const btnDanger    = 'text-xs font-medium text-red-500 hover:text-red-700 hover:
 const btnAction    = 'text-xs font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors'
 
 const TABS = [
-  { key: 'enemies', label: 'Enemy Pool' },
-  { key: 'topics',  label: 'Topics & Battles' },
-  { key: 'paths',   label: 'Learning Paths' },
+  { key: 'enemies',  label: 'Enemy Pool' },
+  { key: 'topics',   label: 'Topics & Battles' },
+  { key: 'paths',    label: 'Learning Paths' },
+  { key: 'progress', label: 'Avances' },
 ]
 
 function Field({ label, required, children }) {
@@ -54,9 +56,10 @@ export default function BattlesAdminPanel() {
         ))}
       </div>
 
-      {tab === 'enemies' && <EnemyPoolTab />}
-      {tab === 'topics'  && <TopicsTab />}
-      {tab === 'paths'   && <PathsTab />}
+      {tab === 'enemies'  && <EnemyPoolTab />}
+      {tab === 'topics'   && <TopicsTab />}
+      {tab === 'paths'    && <PathsTab />}
+      {tab === 'progress' && <ProgressTab />}
     </div>
   )
 }
@@ -575,6 +578,179 @@ function PathForm({ allTopics = [], onSave, onCancel }) {
         <button type="submit" disabled={saving} className={btnPrimary}>{saving ? 'Saving…' : 'Create Path'}</button>
       </div>
     </form>
+  )
+}
+
+// ── Progress Tab ───────────────────────────────────────────────────────────────
+
+function ProgressTab() {
+  const [developers, setDevelopers] = useState([])
+  const [selectedDev, setSelectedDev]   = useState(null)
+  const [paths, setPaths]               = useState([])
+  const [loadingDevs, setLoadingDevs]   = useState(true)
+  const [loadingPaths, setLoadingPaths] = useState(false)
+  const [error, setError]               = useState(null)
+  const [expandedId, setExpandedId]     = useState(null)
+
+  useEffect(() => {
+    getUsers()
+      .then((users) => {
+        const devs = users.filter((u) => u.role === 'developer')
+        setDevelopers(devs)
+        if (devs.length > 0) setSelectedDev(devs[0])
+      })
+      .catch((e) => setError(e.message))
+      .finally(() => setLoadingDevs(false))
+  }, [])
+
+  useEffect(() => {
+    if (!selectedDev) return
+    setLoadingPaths(true)
+    setPaths([])
+    getUserBattleProgress(selectedDev.id)
+      .then(setPaths)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoadingPaths(false))
+  }, [selectedDev])
+
+  if (loadingDevs) return <p className="text-sm text-gray-400 py-8 text-center">Loading…</p>
+  if (error)       return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3">
+        <label className="text-xs font-medium text-gray-600">Developer</label>
+        <select
+          className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          value={selectedDev?.id ?? ''}
+          onChange={(e) => {
+            const dev = developers.find((d) => d.id === e.target.value)
+            setSelectedDev(dev ?? null)
+          }}
+        >
+          {developers.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+        </select>
+      </div>
+
+      {loadingPaths ? (
+        <p className="text-sm text-gray-400 py-4 text-center">Loading paths…</p>
+      ) : paths.length === 0 ? (
+        <div className="border border-dashed border-gray-200 rounded-xl py-10 text-center">
+          <p className="text-sm text-gray-400">No battle paths assigned to this developer.</p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {paths.map((path) => (
+            <BattleProgressCard
+              key={path.id}
+              path={path}
+              isExpanded={expandedId === path.id}
+              onToggle={() => setExpandedId((prev) => prev === path.id ? null : path.id)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function BattleProgressCard({ path, isExpanded, onToggle }) {
+  const totalBattles     = path.topics.reduce((acc, t) => acc + t.battles.length, 0)
+  const completedBattles = path.topics.reduce(
+    (acc, t) => acc + t.battles.filter((b) => b.progress?.completed).length,
+    0
+  )
+  const progressPct = totalBattles === 0 ? 0 : Math.round((completedBattles / totalBattles) * 100)
+
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden">
+      <div className="bg-gray-50 px-4 py-3 flex items-center justify-between gap-3 border-b border-gray-200">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{path.title}</p>
+          <div className="flex items-center gap-3 mt-1">
+            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden max-w-xs">
+              <div className="h-1.5 bg-indigo-500 rounded-full transition-all" style={{ width: `${progressPct}%` }} />
+            </div>
+            <span className="text-xs text-gray-400 shrink-0">
+              {progressPct}% · {completedBattles}/{totalBattles} batallas
+            </span>
+          </div>
+        </div>
+        <button onClick={onToggle} className={btnAction}>
+          {isExpanded ? 'Ocultar' : 'Ver detalle'}
+        </button>
+      </div>
+
+      {isExpanded && (
+        <div className="divide-y divide-gray-50">
+          {path.topics.length === 0 ? (
+            <p className="text-xs text-gray-400 px-4 py-3">Sin temas en este path.</p>
+          ) : (
+            path.topics.map((topic) => (
+              <TopicProgressRow key={topic.id} topic={topic} />
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function TopicProgressRow({ topic }) {
+  const [expanded, setExpanded] = useState(false)
+  const total     = topic.battles.length
+  const completed = topic.battles.filter((b) => b.progress?.completed).length
+
+  return (
+    <div>
+      <div
+        className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+        onClick={() => setExpanded((v) => !v)}
+      >
+        <span className="text-base shrink-0">{topic.icon || '📚'}</span>
+        <p className="text-xs font-medium text-gray-800 flex-1 truncate">{topic.title}</p>
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
+          completed === total && total > 0
+            ? 'bg-green-100 text-green-700'
+            : completed > 0
+            ? 'bg-blue-100 text-blue-700'
+            : 'bg-gray-100 text-gray-500'
+        }`}>
+          {completed}/{total} completadas
+        </span>
+        <span className="text-gray-300 text-xs shrink-0">{expanded ? '▲' : '▼'}</span>
+      </div>
+
+      {expanded && (
+        <div className="bg-gray-50 border-t border-gray-100 px-4 py-2 space-y-1">
+          {topic.battles.map((battle) => {
+            const prog = battle.progress
+            const isCompleted  = prog?.completed ?? false
+            const isAttempted  = prog !== null && !isCompleted
+            return (
+              <div key={battle.id} className="flex items-center justify-between py-1 gap-2">
+                <span className="text-xs text-gray-700 flex-1 truncate">
+                  {battle.order}. {battle.title}
+                </span>
+                {isCompleted ? (
+                  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium shrink-0">
+                    ✓ {prog.score}/12
+                  </span>
+                ) : isAttempted ? (
+                  <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium shrink-0">
+                    En progreso · {prog.score}/12
+                  </span>
+                ) : (
+                  <span className="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full shrink-0">
+                    Sin iniciar
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }
 

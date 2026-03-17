@@ -110,6 +110,11 @@ export async function getMyPaths() {
   return data.paths
 }
 
+export async function getUserBattleProgress(userId) {
+  const { data } = await client.get(`/api/battles/users/${userId}/progress`)
+  return data.paths
+}
+
 export async function saveBattleProgress(payload) {
   const { data } = await client.post('/api/battles/progress', payload)
   return data.progress
