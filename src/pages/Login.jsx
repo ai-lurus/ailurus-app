@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login } from '../api/auth.js'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const ROLE_REDIRECT = {
   ceo:       '/dashboard',
@@ -11,6 +12,7 @@ const ROLE_REDIRECT = {
 
 export default function Login() {
   const navigate = useNavigate()
+  const { setUser } = useAuth()
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
   const [error, setError]       = useState(null)
@@ -22,6 +24,7 @@ export default function Login() {
     setLoading(true)
     try {
       const user = await login(email, password)
+      setUser(user)
       const redirect = ROLE_REDIRECT[user.role] || '/home'
       navigate(redirect)
     } catch (err) {
