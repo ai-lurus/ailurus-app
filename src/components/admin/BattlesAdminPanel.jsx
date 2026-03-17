@@ -595,7 +595,7 @@ function ProgressTab() {
   useEffect(() => {
     getUsers()
       .then((users) => {
-        const devs = users.filter((u) => u.role === 'developer')
+        const devs = users.filter((u) => u.role !== 'admin' && u.role !== 'ceo')
         setDevelopers(devs)
         if (devs.length > 0) setSelectedDev(devs[0])
       })
