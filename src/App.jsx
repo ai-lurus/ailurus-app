@@ -14,6 +14,8 @@ import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminLearning from './pages/admin/AdminLearning.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import Profile from './pages/Profile.jsx'
+import LearningMapPage from './features/learning-battles/pages/LearningMapPage.jsx'
+import BattlePage from './features/learning-battles/pages/BattlePage.jsx'
 
 const ADMIN_ROLES = ['admin', 'ceo']
 function AdminRoute({ children }) {
@@ -68,6 +70,24 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['developer', 'designer']}>
               <Learning />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/learning/battles"
+          element={
+            <ProtectedRoute allowedRoles={['developer', 'designer']}>
+              <LearningMapPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/learning/battles/:topicId"
+          element={
+            <ProtectedRoute allowedRoles={['developer', 'designer']}>
+              <BattlePage />
             </ProtectedRoute>
           }
         />

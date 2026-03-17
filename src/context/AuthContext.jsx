@@ -15,8 +15,13 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false))
   }, [])
 
+  function setUserAndClearError(u) {
+    setError(null)
+    setUser(u)
+  }
+
   return (
-    <AuthContext.Provider value={{ user, setUser, loading, error }}>
+    <AuthContext.Provider value={{ user, setUser: setUserAndClearError, loading, error }}>
       {children}
     </AuthContext.Provider>
   )
