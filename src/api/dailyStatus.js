@@ -1,7 +1,15 @@
 import client from './client.js'
 
+function getLocalDate() {
+  const d = new Date()
+  const yyyy = d.getFullYear()
+  const mm   = String(d.getMonth() + 1).padStart(2, '0')
+  const dd   = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}
+
 export async function getTodayStatus() {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = getLocalDate()
   const { data } = await client.get('/api/daily-status', { params: { date: today } })
   return data.statuses[0] ?? null
 }
@@ -17,7 +25,7 @@ export async function submitEodStatus(payload) {
 }
 
 export async function getTodayAllStatuses() {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = getLocalDate()
   const { data } = await client.get('/api/daily-status', { params: { date: today } })
   return data.statuses
 }

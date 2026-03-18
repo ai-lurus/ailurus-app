@@ -11,11 +11,14 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000'
  * @returns {Promise<void>}
  */
 export async function streamMorningCheckin({ messages }, onChunk) {
+  const d = new Date()
+  const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
   const res = await fetch(`${API_BASE}/api/agents/morning-checkin`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, date: localDate }),
   })
 
   if (!res.ok) {

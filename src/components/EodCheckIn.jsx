@@ -16,8 +16,13 @@ const MOOD_SUMMARY = {
   struggling: 'Tough day — rest up and come back stronger.',
 }
 
+function getLocalDate() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function EodForm({ onSubmit, submitting }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = getLocalDate()
   const [eodMood, setEodMood]           = useState('')
   const [eodCompleted, setEodCompleted] = useState('')
   const [eodBlockers, setEodBlockers]   = useState('')

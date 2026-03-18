@@ -16,8 +16,13 @@ const MOOD_SUMMARY = {
   struggling: `Rough start — that's okay. You showed up, that matters.`,
 }
 
+function getLocalDate() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 function CheckInForm({ onSubmit, submitting }) {
-  const today = new Date().toISOString().slice(0, 10)
+  const today = getLocalDate()
   const [mood, setMood]               = useState('')
   const [availableHrs, setAvailableHrs] = useState('')
   const [appointments, setAppointments] = useState('')
