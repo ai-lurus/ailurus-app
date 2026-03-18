@@ -180,7 +180,7 @@ export default function Learning() {
   const [updating, setUpdating] = useState(null)
 
   useEffect(() => {
-    if (!loading && (!user || user.role !== 'developer')) {
+    if (!loading && (!user || !['developer', 'designer'].includes(user.role))) {
       navigate('/', { replace: true })
     }
   }, [user, loading, navigate])
