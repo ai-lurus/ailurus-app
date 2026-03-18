@@ -30,8 +30,13 @@ export async function updateTask(taskId, updates) {
   return data.task
 }
 
+function getLocalDate() {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 export async function getTodayTaskActivity(date) {
-  const params = date ? { date } : { date: new Date().toISOString().slice(0, 10) }
+  const params = date ? { date } : { date: getLocalDate() }
   const { data } = await client.get('/api/tasks/today-activity', { params })
   return data.activity // [{ user: { id, name }, tasks: [...] }]
 }

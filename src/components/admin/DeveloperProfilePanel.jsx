@@ -4,6 +4,11 @@ import { getOneOnOnes, createOneOnOneNote, updateOneOnOneNote, deleteOneOnOneNot
 import { getPerformanceReviews, createPerformanceReview, updatePerformanceReview } from '../../api/performanceReviews.js'
 import { getTaskHistory } from '../../api/tasks.js'
 
+function localDateStr(date) {
+  const d = date ?? new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
+
 // ── Mood helpers ──────────────────────────────────────────────────────────────
 
 const MOOD_COLORS = {
@@ -51,8 +56,8 @@ function ActivityTab({ userId }) {
     const to   = new Date()
     const from = new Date(to)
     from.setDate(from.getDate() - 29)
-    const fromStr = from.toISOString().slice(0, 10)
-    const toStr   = to.toISOString().slice(0, 10)
+    const fromStr = localDateStr(from)
+    const toStr   = localDateStr(to)
 
     client.get('/api/daily-status', { params: { userId, from: fromStr, to: toStr } })
       .then(({ data }) => setStatuses(data.statuses ?? []))
@@ -68,7 +73,7 @@ function ActivityTab({ userId }) {
   for (let i = 29; i >= 0; i--) {
     const d = new Date()
     d.setDate(d.getDate() - i)
-    const dateStr = d.toISOString().slice(0, 10)
+    const dateStr = localDateStr(d)
     const status = statuses.find((s) => s.date?.slice(0, 10) === dateStr)
     days.push({ dateStr, status })
   }
@@ -174,7 +179,7 @@ function TicketsTab({ userId }) {
     const to   = new Date()
     const from = new Date(to)
     from.setDate(from.getDate() - 55) // ~8 weeks
-    getTaskHistory(userId, from.toISOString().slice(0, 10), to.toISOString().slice(0, 10))
+    getTaskHistory(userId, localDateStr(from), localDateStr(to))
       .then(setData)
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
@@ -268,7 +273,7 @@ function OneOnOnesTab({ userId }) {
 
   function openNew() {
     setEditingId(null)
-    setForm({ ...EMPTY_NOTE_FORM, sessionDate: new Date().toISOString().slice(0, 10) })
+    setForm({ ...EMPTY_NOTE_FORM, sessionDate: localDateStr() })
     setFormError(null)
     setShowForm(true)
   }
