@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { getMyTasks, updateTask } from '../api/tasks.js'
 import { TasksIcon } from './Icons.jsx'
+import CreateTicketModal from './CreateTicketModal.jsx'
 
 const CATEGORY_STYLES = {
   engineering: 'bg-blue-50 text-blue-700 border border-blue-100',
@@ -162,6 +163,7 @@ export default function MyTasks({ userId }) {
   const [error, setError]                 = useState(null)
   const [updating, setUpdating]           = useState(new Set())
   const [pendingReview, setPendingReview] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
 
   useEffect(() => {
     if (!userId) return
@@ -221,9 +223,30 @@ export default function MyTasks({ userId }) {
         <TasksIcon className="w-5 h-5 text-slate-500 shrink-0" />
         <h2 className="text-base font-bold text-slate-900">My Tasks Today</h2>
         {!loading && (
-          <span className="ml-auto text-xs text-slate-400">{activeCount} task{activeCount !== 1 ? 's' : ''}</span>
+          <span className="text-xs text-slate-400">{activeCount} task{activeCount !== 1 ? 's' : ''}</span>
         )}
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="ml-auto flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition-colors"
+        >
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          New Ticket
+        </button>
       </div>
+
+      {showCreateModal && (
+        <CreateTicketModal
+          userId={userId}
+          onClose={() => setShowCreateModal(false)}
+          onCreated={(newTask) => {
+            if (['in_progress', 'backlog', 'in_review'].includes(newTask.status)) {
+              setTasks((prev) => [newTask, ...prev])
+            }
+          }}
+        />
+      )}
 
       {loading && <p className="text-sm text-slate-400">Loading tasks…</p>}
       {error   && <p className="text-sm text-red-500">{error}</p>}
