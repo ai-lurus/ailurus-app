@@ -3,12 +3,13 @@ import { useAuth } from '../hooks/useAuth.js'
 import { logout } from '../api/auth.js'
 import {
   DashboardIcon, HomeIcon, LearningIcon, LogoutIcon,
-  BoardIcon, FolderIcon, UsersIcon, ReportIcon, CodeIcon,
+  BoardIcon, FolderIcon, UsersIcon, ReportIcon, CodeIcon, SprintIcon,
 } from './Icons.jsx'
 
 const ADMIN_NAV = [
   { path: '/dashboard',      label: 'Overview',     Icon: DashboardIcon },
   { path: '/admin/board',    label: 'Board',        Icon: BoardIcon     },
+  { path: '/admin/sprints',  label: 'Sprints',      Icon: SprintIcon    },
   { path: '/admin/projects', label: 'Projects',     Icon: FolderIcon    },
   { path: '/admin/team',     label: 'Team',         Icon: UsersIcon     },
   { path: '/admin/reports',  label: 'Reports',      Icon: ReportIcon    },

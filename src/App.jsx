@@ -12,6 +12,7 @@ import AdminTeam from './pages/admin/AdminTeam.jsx'
 import AdminReports from './pages/admin/AdminReports.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminLearning from './pages/admin/AdminLearning.jsx'
+import AdminSprints from './pages/admin/AdminSprints.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import Profile from './pages/Profile.jsx'
 import LearningMapPage from './features/learning-battles/pages/LearningMapPage.jsx'
@@ -59,6 +60,7 @@ function App() {
 
         <Route path="/admin" element={<Navigate to="/admin/board" replace />} />
         <Route path="/admin/board" element={<ProtectedRoute allowedRoles={['admin', 'ceo', 'developer', 'designer']}><AdminBoard /></ProtectedRoute>} />
+        <Route path="/admin/sprints"  element={<AdminRoute><AdminSprints /></AdminRoute>} />
         <Route path="/admin/projects" element={<AdminRoute><AdminProjects /></AdminRoute>} />
         <Route path="/admin/team"     element={<AdminRoute><AdminTeam /></AdminRoute>} />
         <Route path="/admin/reports"  element={<AdminRoute><AdminReports /></AdminRoute>} />

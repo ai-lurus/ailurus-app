@@ -6,6 +6,7 @@ import { getAllTasks, createTask, updateTask } from '../../api/tasks.js'
 import { getProjects } from '../../api/projects.js'
 import { getUsers } from '../../api/users.js'
 import { getGoals } from '../../api/goals.js'
+import { getSprints } from '../../api/sprints.js'
 import { useAuth } from '../../hooks/useAuth.js'
 
 // ── Column definitions ────────────────────────────────────────────────────────
@@ -94,7 +95,14 @@ function TaskCard({ task, onClick, onDragStart }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-slate-400 truncate max-w-[55%]">{task.project?.name}</span>
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-[10px] text-slate-400 truncate max-w-[100px]">{task.project?.name}</span>
+          {task.sprint && (
+            <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-indigo-50 text-indigo-600 truncate max-w-[80px]" title={task.sprint.name}>
+              {task.sprint.name}
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {task.storyPoints != null && (
             <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md">
@@ -192,10 +200,11 @@ function KanbanColumn({ column, tasks, onTaskClick, onNewTask, onDrop, canCreate
 
 // ── Task Detail / Edit Modal ──────────────────────────────────────────────────
 
-function TaskDetailModal({ task, users, onClose, onSaved }) {
+function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
   const [form, setForm] = useState({
     status:       task.status,
     assignedTo:   task.assignedTo ?? '',
+    sprintId:     task.sprintId   ?? '',
     prLink:       task.prLink ?? '',
     storyPoints:  task.storyPoints ?? '',
     estimatedHrs: task.estimatedHrs != null ? String(task.estimatedHrs) : '',
@@ -204,6 +213,9 @@ function TaskDetailModal({ task, users, onClose, onSaved }) {
   })
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState(null)
+
+  // Filter sprints to those belonging to this task's project
+  const projectSprints = sprints.filter((s) => s.projectId === task.projectId)
 
   function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -217,6 +229,7 @@ function TaskDetailModal({ task, users, onClose, onSaved }) {
       const updated = await updateTask(task.id, {
         status:       form.status,
         assignedTo:   form.assignedTo   || null,
+        sprintId:     form.sprintId     || null,
         prLink:       form.prLink        || null,
         storyPoints:  form.storyPoints   !== '' ? Number(form.storyPoints)  : null,
         estimatedHrs: form.estimatedHrs  !== '' ? Number(form.estimatedHrs) : null,
@@ -256,6 +269,13 @@ function TaskDetailModal({ task, users, onClose, onSaved }) {
           </Field>
         </div>
 
+        <Field label="Sprint">
+          <select className={inputCls} value={form.sprintId} onChange={(e) => set('sprintId', e.target.value)}>
+            <option value="">— Sin sprint —</option>
+            {projectSprints.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+          </select>
+        </Field>
+
         <Field label="Description">
           <textarea
             className={`${inputCls} resize-none`}
@@ -288,8 +308,7 @@ function TaskDetailModal({ task, users, onClose, onSaved }) {
         {/* Read-only metadata */}
         <div className="bg-slate-50 rounded-lg px-3 py-2.5 text-xs text-slate-500 space-y-1.5">
           <div className="flex gap-2"><span className="font-semibold text-slate-600">Project:</span><span>{task.project?.name ?? '—'}</span></div>
-          {task.goal   && <div className="flex gap-2"><span className="font-semibold text-slate-600">Goal:</span><span>{task.goal.title}</span></div>}
-          {task.sprint && <div className="flex gap-2"><span className="font-semibold text-slate-600">Sprint:</span><span>{task.sprint.name}</span></div>}
+          {task.goal     && <div className="flex gap-2"><span className="font-semibold text-slate-600">Goal:</span><span>{task.goal.title}</span></div>}
           {task.reviewer && <div className="flex gap-2"><span className="font-semibold text-slate-600">Reviewed by:</span><span>{task.reviewer.name}</span></div>}
         </div>
 
@@ -306,16 +325,17 @@ function TaskDetailModal({ task, users, onClose, onSaved }) {
 
 // ── New Task Modal ────────────────────────────────────────────────────────────
 
-function NewTaskModal({ projects, users, defaultStatus, onClose, onCreated }) {
+function NewTaskModal({ projects, users, sprints, defaultStatus, currentUserId, onClose, onCreated }) {
   const [form, setForm] = useState({
     title:        '',
     description:  '',
     category:     'engineering',
     projectId:    projects[0]?.id ?? '',
     goalId:       '',
+    sprintId:     '',
     storyPoints:  '',
     estimatedHrs: '',
-    assignedTo:   '',
+    assignedTo:   currentUserId ?? '',
     status:       defaultStatus,
   })
   const [goals, setGoals]   = useState([])
@@ -344,6 +364,7 @@ function NewTaskModal({ projects, users, defaultStatus, onClose, onCreated }) {
         category:     form.category,
         projectId:    form.projectId,
         goalId:       form.goalId       || null,
+        sprintId:     form.sprintId     || null,
         storyPoints:  form.storyPoints  !== '' ? Number(form.storyPoints)  : null,
         estimatedHrs: form.estimatedHrs !== '' ? Number(form.estimatedHrs) : null,
         assignedTo:   form.assignedTo   || null,
@@ -399,6 +420,17 @@ function NewTaskModal({ projects, users, defaultStatus, onClose, onCreated }) {
           </Field>
         </div>
 
+        {sprints.filter((s) => s.projectId === form.projectId).length > 0 && (
+          <Field label="Sprint">
+            <select className={inputCls} value={form.sprintId} onChange={(e) => set('sprintId', e.target.value)}>
+              <option value="">— Sin sprint —</option>
+              {sprints.filter((s) => s.projectId === form.projectId).map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </Field>
+        )}
+
         <div className="grid grid-cols-2 gap-4">
           <Field label="Story Points">
             <input className={inputCls} type="number" min="0" max="100" value={form.storyPoints} onChange={(e) => set('storyPoints', e.target.value)} placeholder="e.g. 3" />
@@ -408,12 +440,14 @@ function NewTaskModal({ projects, users, defaultStatus, onClose, onCreated }) {
           </Field>
         </div>
 
-        <Field label="Assign To">
-          <select className={inputCls} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
-            <option value="">— Unassigned —</option>
-            {devUsers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
-          </select>
-        </Field>
+        {devUsers.length > 0 && (
+          <Field label="Assign To">
+            <select className={inputCls} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
+              <option value="">— Unassigned —</option>
+              {devUsers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
+            </select>
+          </Field>
+        )}
 
         <div className="flex gap-3 pt-2">
           <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
@@ -430,7 +464,8 @@ function NewTaskModal({ projects, users, defaultStatus, onClose, onCreated }) {
 
 export default function Board() {
   const { user: currentUser } = useAuth()
-  const isAdmin = ['admin', 'ceo'].includes(currentUser?.role)
+  const isAdmin   = ['admin', 'ceo'].includes(currentUser?.role)
+  const canCreate = ['admin', 'ceo', 'developer', 'designer', 'pm'].includes(currentUser?.role)
 
   const [tasks, setTasks]       = useState([])
   const [projects, setProjects] = useState([])
@@ -438,8 +473,10 @@ export default function Board() {
   const [loading, setLoading]   = useState(true)
   const [error, setError]       = useState(null)
 
+  const [sprints, setSprints]             = useState([])
   const [filterProject, setFilterProject] = useState('')
   const [filterUser, setFilterUser]       = useState('')
+  const [filterSprint, setFilterSprint]   = useState('')
 
   const [selectedTask, setSelectedTask]     = useState(null)
   const [newTaskStatus, setNewTaskStatus]   = useState(null) // non-null = show modal
@@ -463,6 +500,18 @@ export default function Board() {
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false))
   }, [currentUser])
+
+  // Load sprints when project filter changes
+  useEffect(() => {
+    if (!filterProject) {
+      setSprints([])
+      setFilterSprint('')
+      return
+    }
+    getSprints(filterProject)
+      .then(setSprints)
+      .catch(() => setSprints([]))
+  }, [filterProject])
 
   // Auto-open task from URL ?task=id
   useEffect(() => {
@@ -515,6 +564,7 @@ export default function Board() {
   const filteredTasks = tasks.filter((t) => {
     if (filterProject && t.projectId !== filterProject) return false
     if (filterUser    && t.assignedTo !== filterUser)   return false
+    if (filterSprint  && t.sprintId   !== filterSprint) return false
     return true
   })
 
@@ -556,7 +606,7 @@ export default function Board() {
               <h1 className="text-2xl font-bold text-slate-900">Board</h1>
               <p className="text-slate-500 mt-0.5 text-sm">{totalVisible} task{totalVisible !== 1 ? 's' : ''}</p>
             </div>
-            {isAdmin && (
+            {canCreate && (
               <button
                 onClick={() => setNewTaskStatus('backlog')}
                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors"
@@ -588,9 +638,22 @@ export default function Board() {
               ))}
             </select>
 
-            {(filterProject || filterUser) && (
+            {sprints.length > 0 && (
+              <select
+                value={filterSprint}
+                onChange={(e) => setFilterSprint(e.target.value)}
+                className="text-sm border border-slate-200 rounded-lg px-3 py-1.5 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+              >
+                <option value="">All Sprints</option>
+                {sprints.map((s) => (
+                  <option key={s.id} value={s.id}>{s.name}</option>
+                ))}
+              </select>
+            )}
+
+            {(filterProject || filterUser || filterSprint) && (
               <button
-                onClick={() => { setFilterProject(''); setFilterUser('') }}
+                onClick={() => { setFilterProject(''); setFilterUser(''); setFilterSprint('') }}
                 className="text-xs text-slate-500 hover:text-slate-700 underline"
               >
                 Clear filters
@@ -610,7 +673,7 @@ export default function Board() {
                 onTaskClick={handleTaskClick}
                 onNewTask={(status) => setNewTaskStatus(status)}
                 onDrop={handleDrop}
-                canCreate={isAdmin}
+                canCreate={canCreate}
               />
             ))}
           </div>
@@ -622,6 +685,7 @@ export default function Board() {
         <TaskDetailModal
           task={selectedTask}
           users={users}
+          sprints={sprints}
           onClose={handleCloseDetail}
           onSaved={handleTaskSaved}
         />
@@ -632,7 +696,9 @@ export default function Board() {
         <NewTaskModal
           projects={projects}
           users={users}
+          sprints={sprints}
           defaultStatus={newTaskStatus}
+          currentUserId={currentUser?.id}
           onClose={() => setNewTaskStatus(null)}
           onCreated={handleTaskCreated}
         />
