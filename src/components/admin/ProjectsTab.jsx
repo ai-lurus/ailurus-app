@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { getProjects, updateProject, createProject, deleteProject } from '../../api/projects.js'
 import { getTeams, createTeam, addTeamMember, removeTeamMember, renameTeam, deleteTeam } from '../../api/teams.js'
 import { getUsers } from '../../api/users.js'
@@ -471,6 +472,7 @@ function NewProjectModal({ onClose, onCreated }) {
 // ── Main tab ───────────────────────────────────────────────────────────────────
 
 export default function ProjectsTab() {
+  const navigate = useNavigate()
   const [projects, setProjects]       = useState([])
   const [loading, setLoading]         = useState(true)
   const [error, setError]             = useState(null)
@@ -545,6 +547,9 @@ export default function ProjectsTab() {
                 <td className={td}>{formatDate(p.deadline)}</td>
                 <td className={`${td} text-right`}>
                   <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => navigate(`/projects/${p.id}`)} className="text-xs font-medium text-gray-500 hover:text-gray-800 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors">
+                      View
+                    </button>
                     <button onClick={() => setEditing(p)} className="text-xs font-medium text-indigo-600 hover:text-indigo-800 px-3 py-1 rounded-lg hover:bg-indigo-50 transition-colors">
                       Edit
                     </button>

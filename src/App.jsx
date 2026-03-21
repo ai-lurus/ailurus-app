@@ -14,6 +14,7 @@ import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminLearning from './pages/admin/AdminLearning.jsx'
 import AdminSprints from './pages/admin/AdminSprints.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
+import ProjectDocuments from './pages/ProjectDocuments.jsx'
 import Profile from './pages/Profile.jsx'
 import LearningMapPage from './features/learning-battles/pages/LearningMapPage.jsx'
 import BattlePage from './features/learning-battles/pages/BattlePage.jsx'
@@ -54,6 +55,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['ceo', 'admin', 'client', 'developer', 'designer']}>
               <ProjectDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/projects/:id/documents"
+          element={
+            <ProtectedRoute allowedRoles={['ceo', 'admin', 'client', 'developer', 'designer']}>
+              <ProjectDocuments />
             </ProtectedRoute>
           }
         />

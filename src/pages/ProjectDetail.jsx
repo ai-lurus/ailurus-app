@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { getProject, getProjectDashboard } from '../api/projects.js'
+import { useAuth } from '../hooks/useAuth.js'
 import Layout from '../components/Layout.jsx'
 
 const STATUS_CONFIG = {
@@ -65,6 +66,8 @@ function ProgressBar({ percent }) {
 export default function ProjectDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuth()
+  const backTo = ['developer', 'designer'].includes(user?.role) ? '/home' : '/dashboard'
   const [project, setProject]     = useState(null)
   const [dashboard, setDashboard] = useState(null)
   const [loading, setLoading]     = useState(true)
@@ -105,7 +108,7 @@ export default function ProjectDetail() {
 
         {/* Header */}
         <div className="mb-8">
-          <button onClick={() => navigate(-1)} className="text-xs text-slate-400 hover:text-slate-600 mb-3 flex items-center gap-1 transition-colors">
+          <button onClick={() => navigate(backTo)} className="text-xs text-slate-400 hover:text-slate-600 mb-3 flex items-center gap-1 transition-colors">
             ← Back
           </button>
           <div className="flex items-start justify-between gap-4">
@@ -122,6 +125,12 @@ export default function ProjectDetail() {
               </div>
               {project.description && <p className="text-slate-500 text-sm mt-1 max-w-2xl">{project.description}</p>}
             </div>
+            <Link
+              to={`/projects/${project.id}/documents`}
+              className="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-800 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-3 py-1.5 rounded-lg transition-colors shrink-0"
+            >
+              📄 Documents
+            </Link>
           </div>
         </div>
 
