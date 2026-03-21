@@ -20,8 +20,8 @@ const ADMIN_NAV = [
 const NAV_BY_ROLE = {
   ceo:       ADMIN_NAV,
   admin:     ADMIN_NAV,
-  developer: [{ path: '/home', label: 'Today', Icon: HomeIcon }, { path: '/admin/board', label: 'Board', Icon: BoardIcon }, { path: '/learning', label: 'Learning', Icon: LearningIcon }],
-  designer:  [{ path: '/home', label: 'Today', Icon: HomeIcon }, { path: '/admin/board', label: 'Board', Icon: BoardIcon }, { path: '/learning', label: 'Learning', Icon: LearningIcon }],
+  developer: [{ path: '/home', label: 'Today', Icon: HomeIcon }, { path: '/admin/board', label: 'Board', Icon: BoardIcon }, { path: '/projects', label: 'Projects', Icon: FolderIcon }, { path: '/learning', label: 'Learning', Icon: LearningIcon }],
+  designer:  [{ path: '/home', label: 'Today', Icon: HomeIcon }, { path: '/admin/board', label: 'Board', Icon: BoardIcon }, { path: '/projects', label: 'Projects', Icon: FolderIcon }, { path: '/learning', label: 'Learning', Icon: LearningIcon }],
   client:    [{ path: '/dashboard', label: 'Overview', Icon: DashboardIcon }],
 }
 
