@@ -48,3 +48,13 @@ export async function getTaskHistory(userId, from, to) {
   const { data } = await client.get('/api/tasks/history', { params })
   return data // { weeks: [...], tasks: [...] }
 }
+
+export async function getTaskComments(taskId) {
+  const { data } = await client.get(`/api/tasks/${taskId}/comments`)
+  return data.comments
+}
+
+export async function createTaskComment(taskId, body) {
+  const { data } = await client.post(`/api/tasks/${taskId}/comments`, { body })
+  return data.comment
+}
