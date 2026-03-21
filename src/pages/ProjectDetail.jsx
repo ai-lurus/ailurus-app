@@ -67,7 +67,8 @@ export default function ProjectDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const backTo = ['developer', 'designer'].includes(user?.role) ? '/home' : '/dashboard'
+  const backTo = ['developer', 'designer'].includes(user?.role) ? '/projects' : '/dashboard'
+  const canViewFinancials = ['ceo', 'admin'].includes(user?.role)
   const [project, setProject]     = useState(null)
   const [dashboard, setDashboard] = useState(null)
   const [loading, setLoading]     = useState(true)
@@ -136,7 +137,7 @@ export default function ProjectDetail() {
 
         {/* Stats row */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard label="Budget" value={formatCurrency(project.budget)} />
+          {canViewFinancials && <StatCard label="Budget" value={formatCurrency(project.budget)} />}
           <StatCard label="Deadline" value={formatDate(project.deadline)} />
           <StatCard
             label="Open Blockers"
@@ -146,8 +147,8 @@ export default function ProjectDetail() {
           <StatCard label="Total Tasks" value={totalTasks} />
         </div>
 
-        {/* Timeline burn */}
-        {dashboard?.budgetBurnPercent != null && (
+        {/* Timeline burn — financial metric, only for admin/CEO */}
+        {canViewFinancials && dashboard?.budgetBurnPercent != null && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
             <div className="flex items-center justify-between mb-2">
               <p className="text-sm font-semibold text-slate-700">Timeline Progress</p>
