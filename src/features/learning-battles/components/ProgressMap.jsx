@@ -17,7 +17,7 @@ export default function ProgressMap({ topics, onTopicClick }) {
     }
 
     const prev = topics[index - 1]
-    const prevCompleted = (prev.battles ?? []).length === 5
+    const prevCompleted = (prev.battles ?? []).length > 0
       && (prev.battles ?? []).every((b) => b.progress?.completed)
 
     if (!prevCompleted) return 'locked'
