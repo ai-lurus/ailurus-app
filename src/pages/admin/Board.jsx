@@ -17,6 +17,7 @@ const COLUMNS = [
   { id: 'in_progress', label: 'In Progress',  headerCls: 'text-amber-600',   dotCls: 'bg-amber-400',   colCls: 'bg-amber-50/60' },
   { id: 'in_review',   label: 'In Review',    headerCls: 'text-violet-600',  dotCls: 'bg-violet-400',  colCls: 'bg-violet-50/60'},
   { id: 'done',        label: 'Done',         headerCls: 'text-emerald-600', dotCls: 'bg-emerald-400', colCls: 'bg-emerald-50/60'},
+  { id: 'cancelled',   label: "Won't Do",     headerCls: 'text-rose-500',    dotCls: 'bg-rose-400',    colCls: 'bg-rose-50/60'  },
 ]
 
 const ALL_STATUSES = [
@@ -26,6 +27,7 @@ const ALL_STATUSES = [
   { id: 'blocked',     label: 'Blocked'      },
   { id: 'in_review',   label: 'In Review'    },
   { id: 'done',        label: 'Done'         },
+  { id: 'cancelled',   label: "Won't Do"     },
 ]
 
 const CATEGORY_COLORS = {
@@ -200,32 +202,41 @@ function KanbanColumn({ column, tasks, onTaskClick, onNewTask, onDrop, canCreate
 
 // ── Task Detail / Edit Modal ──────────────────────────────────────────────────
 
-function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
+function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
   const { user: currentUser } = useAuth()
   const [form, setForm] = useState({
     status:       task.status,
     assignedTo:   task.assignedTo ?? '',
     sprintId:     task.sprintId   ?? '',
+    projectId:    task.projectId  ?? '',
     prLink:       task.prLink ?? '',
     storyPoints:  task.storyPoints ?? '',
     estimatedHrs: task.estimatedHrs != null ? String(task.estimatedHrs) : '',
     title:        task.title,
     description:  task.description ?? '',
   })
+  const [availableSprints, setAvailableSprints] = useState([])
   const [saving, setSaving]           = useState(false)
   const [error, setError]             = useState(null)
   const [comments, setComments]       = useState([])
   const [commentBody, setCommentBody] = useState('')
   const [posting, setPosting]         = useState(false)
 
-  const projectSprints = sprints.filter((s) => s.projectId === task.projectId)
+  useEffect(() => {
+    if (!form.projectId) { setAvailableSprints([]); return }
+    getSprints(form.projectId).then(setAvailableSprints).catch(() => setAvailableSprints([]))
+  }, [form.projectId])
 
   useEffect(() => {
     getTaskComments(task.id).then(setComments).catch(() => {})
   }, [task.id])
 
   function set(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    if (field === 'projectId') {
+      setForm((prev) => ({ ...prev, projectId: value, sprintId: '' }))
+    } else {
+      setForm((prev) => ({ ...prev, [field]: value }))
+    }
   }
 
   async function handleSave(e) {
@@ -237,6 +248,7 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
         status:       form.status,
         assignedTo:   form.assignedTo   || null,
         sprintId:     form.sprintId     || null,
+        projectId:    form.projectId    || null,
         prLink:       form.prLink        || null,
         storyPoints:  form.storyPoints   !== '' ? Number(form.storyPoints)  : null,
         estimatedHrs: form.estimatedHrs  !== '' ? Number(form.estimatedHrs) : null,
@@ -267,6 +279,9 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
   }
 
   const devUsers = users.filter((u) => ['developer', 'designer', 'pm', 'admin', 'ceo'].includes(u.role))
+  const isDevOrDesigner = ['developer', 'designer'].includes(currentUser?.role)
+  const isUnassigned    = !form.assignedTo
+  const isAssignedToMe  = form.assignedTo === currentUser?.id
 
   return (
     <Modal title="Task Details" onClose={onClose} size="lg">
@@ -277,6 +292,12 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
           <input className={inputCls} value={form.title} onChange={(e) => set('title', e.target.value)} required />
         </Field>
 
+        <Field label="Project" required>
+          <select className={inputCls} value={form.projectId} onChange={(e) => set('projectId', e.target.value)}>
+            {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        </Field>
+
         <div className="grid grid-cols-2 gap-3">
           <Field label="Status">
             <select className={inputCls} value={form.status} onChange={(e) => set('status', e.target.value)}>
@@ -284,17 +305,46 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
             </select>
           </Field>
           <Field label="Assigned To">
-            <select className={inputCls} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
-              <option value="">— Unassigned —</option>
-              {devUsers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
-            </select>
+            {devUsers.length > 0 ? (
+              <select className={inputCls} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
+                <option value="">— Unassigned —</option>
+                {devUsers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
+              </select>
+            ) : isDevOrDesigner ? (
+              <div className="flex items-center gap-2">
+                {isAssignedToMe ? (
+                  <span className="text-sm text-slate-700 font-medium">{currentUser.name}</span>
+                ) : isUnassigned ? (
+                  <button
+                    type="button"
+                    onClick={() => set('assignedTo', currentUser.id)}
+                    className="text-sm font-semibold text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 transition-colors"
+                  >
+                    Tomar ticket
+                  </button>
+                ) : (
+                  <span className="text-sm text-slate-500 italic">Asignado a otro</span>
+                )}
+                {isAssignedToMe && (
+                  <button
+                    type="button"
+                    onClick={() => set('assignedTo', '')}
+                    className="text-xs text-slate-400 hover:text-red-500 transition-colors"
+                  >
+                    Liberar
+                  </button>
+                )}
+              </div>
+            ) : (
+              <span className="text-sm text-slate-400 italic">Sin asignar</span>
+            )}
           </Field>
         </div>
 
         <Field label="Sprint">
           <select className={inputCls} value={form.sprintId} onChange={(e) => set('sprintId', e.target.value)}>
             <option value="">— Sin sprint —</option>
-            {projectSprints.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+            {availableSprints.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
         </Field>
 
@@ -328,11 +378,12 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
         </div>
 
         {/* Read-only metadata */}
-        <div className="bg-slate-50 rounded-lg px-3 py-2.5 text-xs text-slate-500 space-y-1.5">
-          <div className="flex gap-2"><span className="font-semibold text-slate-600">Project:</span><span>{task.project?.name ?? '—'}</span></div>
-          {task.goal     && <div className="flex gap-2"><span className="font-semibold text-slate-600">Goal:</span><span>{task.goal.title}</span></div>}
-          {task.reviewer && <div className="flex gap-2"><span className="font-semibold text-slate-600">Reviewed by:</span><span>{task.reviewer.name}</span></div>}
-        </div>
+        {(task.goal || task.reviewer) && (
+          <div className="bg-slate-50 rounded-lg px-3 py-2.5 text-xs text-slate-500 space-y-1.5">
+            {task.goal     && <div className="flex gap-2"><span className="font-semibold text-slate-600">Goal:</span><span>{task.goal.title}</span></div>}
+            {task.reviewer && <div className="flex gap-2"><span className="font-semibold text-slate-600">Reviewed by:</span><span>{task.reviewer.name}</span></div>}
+          </div>
+        )}
 
         <div className="flex gap-3 pt-1">
           <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
@@ -409,7 +460,7 @@ function TaskDetailModal({ task, users, sprints, onClose, onSaved }) {
 
 // ── New Task Modal ────────────────────────────────────────────────────────────
 
-function NewTaskModal({ projects, users, sprints, defaultStatus, currentUserId, onClose, onCreated }) {
+function NewTaskModal({ projects, users, defaultStatus, currentUserId, onClose, onCreated }) {
   const [form, setForm] = useState({
     title:        '',
     description:  '',
@@ -422,7 +473,8 @@ function NewTaskModal({ projects, users, sprints, defaultStatus, currentUserId, 
     assignedTo:   currentUserId ?? '',
     status:       defaultStatus,
   })
-  const [goals, setGoals]   = useState([])
+  const [goals, setGoals]                   = useState([])
+  const [availableSprints, setAvailableSprints] = useState([])
   const [saving, setSaving] = useState(false)
   const [error, setError]   = useState(null)
 
@@ -433,8 +485,17 @@ function NewTaskModal({ projects, users, sprints, defaultStatus, currentUserId, 
       .catch(() => setGoals([]))
   }, [form.projectId])
 
+  useEffect(() => {
+    if (!form.projectId) { setAvailableSprints([]); return }
+    getSprints(form.projectId).then(setAvailableSprints).catch(() => setAvailableSprints([]))
+  }, [form.projectId])
+
   function set(field, value) {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    if (field === 'projectId') {
+      setForm((prev) => ({ ...prev, projectId: value, sprintId: '', goalId: '' }))
+    } else {
+      setForm((prev) => ({ ...prev, [field]: value }))
+    }
   }
 
   async function handleSubmit(e) {
@@ -504,11 +565,11 @@ function NewTaskModal({ projects, users, sprints, defaultStatus, currentUserId, 
           </Field>
         </div>
 
-        {sprints.filter((s) => s.projectId === form.projectId).length > 0 && (
+        {availableSprints.length > 0 && (
           <Field label="Sprint">
             <select className={inputCls} value={form.sprintId} onChange={(e) => set('sprintId', e.target.value)}>
               <option value="">— Sin sprint —</option>
-              {sprints.filter((s) => s.projectId === form.projectId).map((s) => (
+              {availableSprints.map((s) => (
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
@@ -561,6 +622,8 @@ export default function Board() {
   const [filterProject, setFilterProject] = useState('')
   const [filterUser, setFilterUser]       = useState('')
   const [filterSprint, setFilterSprint]   = useState('')
+  const [hideTerminal, setHideTerminal]   = useState(false)
+  const [hideOldSprints, setHideOldSprints] = useState(false)
 
   const [selectedTask, setSelectedTask]     = useState(null)
   const [newTaskStatus, setNewTaskStatus]   = useState(null) // non-null = show modal
@@ -649,6 +712,8 @@ export default function Board() {
     if (filterProject && t.projectId !== filterProject) return false
     if (filterUser    && t.assignedTo !== filterUser)   return false
     if (filterSprint  && t.sprintId   !== filterSprint) return false
+    if (hideTerminal  && (t.status === 'done' || t.status === 'cancelled')) return false
+    if (hideOldSprints && t.sprint?.status === 'completed') return false
     return true
   })
 
@@ -735,6 +800,28 @@ export default function Board() {
               </select>
             )}
 
+            <button
+              onClick={() => setHideTerminal((v) => !v)}
+              className={`text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
+                hideTerminal
+                  ? 'bg-slate-700 text-white border-slate-700'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {hideTerminal ? 'Mostrando activos' : 'Ocultar done / won\'t do'}
+            </button>
+
+            <button
+              onClick={() => setHideOldSprints((v) => !v)}
+              className={`text-xs font-medium px-3 py-1.5 rounded-lg border transition-colors ${
+                hideOldSprints
+                  ? 'bg-slate-700 text-white border-slate-700'
+                  : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+              }`}
+            >
+              {hideOldSprints ? 'Mostrando todos los sprints' : 'Ocultar sprints cerrados'}
+            </button>
+
             {(filterProject || filterUser || filterSprint) && (
               <button
                 onClick={() => { setFilterProject(''); setFilterUser(''); setFilterSprint('') }}
@@ -769,7 +856,7 @@ export default function Board() {
         <TaskDetailModal
           task={selectedTask}
           users={users}
-          sprints={sprints}
+          projects={projects}
           onClose={handleCloseDetail}
           onSaved={handleTaskSaved}
         />
@@ -780,7 +867,6 @@ export default function Board() {
         <NewTaskModal
           projects={projects}
           users={users}
-          sprints={sprints}
           defaultStatus={newTaskStatus}
           currentUserId={currentUser?.id}
           onClose={() => setNewTaskStatus(null)}
