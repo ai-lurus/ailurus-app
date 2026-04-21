@@ -34,7 +34,7 @@ export default function Admin() {
   if (loading) {
     return (
       <Layout>
-        <div className="flex items-center justify-center py-40 text-slate-400 text-sm">Loading…</div>
+        <div className="flex items-center justify-center py-40 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading…</div>
       </Layout>
     )
   }
@@ -46,21 +46,32 @@ export default function Admin() {
       <div className="px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-900">Admin Panel</h1>
-          <p className="text-slate-500 mt-1 text-sm">Manage projects, teams, backlog, and reports</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Admin Panel</h1>
+          <p className="mt-1 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Manage projects, teams, backlog, and reports</p>
         </div>
 
         {/* Tab Bar */}
-        <div className="flex gap-1 border-b border-slate-200 mb-0">
+        <div className="flex gap-1 mb-0" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
           {TABS.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors -mb-px cursor-pointer ${
-                activeTab === tab.id
-                  ? 'bg-white border border-b-white border-slate-200 text-indigo-600'
-                  : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+                activeTab === tab.id ? '' : ''
               }`}
+              style={
+                activeTab === tab.id
+                  ? {
+                      backgroundColor: 'hsl(224, 25%, 16%)',
+                      border: '1px solid hsl(224, 30%, 18%)',
+                      borderBottom: '1px solid hsl(224, 25%, 16%)',
+                      color: 'hsl(244, 100%, 69%)',
+                    }
+                  : {
+                      color: 'hsl(224, 20%, 55%)',
+                      backgroundColor: 'transparent',
+                    }
+              }
             >
               {tab.label}
             </button>
@@ -68,7 +79,7 @@ export default function Admin() {
         </div>
 
         {/* Tab Content */}
-        <div className="bg-white rounded-b-xl rounded-tr-xl border border-slate-200 p-6">
+        <div className="rounded-b-xl rounded-tr-xl p-6" style={{ backgroundColor: 'hsl(224, 30%, 14%)', border: '1px solid hsl(224, 30%, 18%)' }}>
           {activeTab === 'projects' && <ProjectsTab />}
           {activeTab === 'team'     && <TeamTab />}
           {activeTab === 'backlog'  && <BacklogTab />}

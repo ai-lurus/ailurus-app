@@ -19,21 +19,45 @@ function toInputDate(iso) {
 
 const STATUS_LABEL = { planned: 'Planeado', active: 'Activo', completed: 'Completado' }
 const STATUS_CLS = {
-  planned:   'bg-slate-100 text-slate-600',
-  active:    'bg-emerald-50 text-emerald-700 border border-emerald-200',
-  completed: 'bg-blue-50 text-blue-700 border border-blue-100',
+  planned:   'bg-slate-600/20 text-slate-400',
+  active:    'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
+  completed: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
 }
 
-const inputCls     = 'w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
-const btnPrimary   = 'flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-slate-200 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors'
-const btnDanger    = 'px-4 py-2 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 transition-colors'
+const inputCls     = 'w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 transition-colors'
+const btnPrimary   = 'flex-1 px-4 py-2 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
+const btnSecondary = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors'
+const btnDanger    = 'px-4 py-2 text-sm font-medium rounded-lg transition-colors'
+
+const inputStyle = {
+  backgroundColor: 'hsl(224, 25%, 16%)',
+  border: '1px solid hsl(224, 30%, 18%)',
+  color: 'hsl(224, 40%, 95%)',
+  focusRingColor: 'hsl(244, 100%, 69%)',
+}
+
+const btnPrimaryStyle = {
+  backgroundColor: 'hsl(244, 100%, 69%)',
+  color: 'hsl(224, 30%, 14%)',
+}
+
+const btnSecondaryStyle = {
+  backgroundColor: 'transparent',
+  border: '1px solid hsl(224, 30%, 18%)',
+  color: 'hsl(224, 20%, 55%)',
+}
+
+const btnDangerStyle = {
+  backgroundColor: 'transparent',
+  border: '1px solid hsl(0, 100%, 20%)',
+  color: 'hsl(0, 100%, 60%)',
+}
 
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-slate-600 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <label className="block text-xs font-medium mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>
+        {label}{required && <span style={{ color: 'hsl(0, 100%, 60%)' }} className="ml-0.5">*</span>}
       </label>
       {children}
     </div>
@@ -84,14 +108,15 @@ function SprintFormModal({ sprint, projectId, onClose, onSaved }) {
   return (
     <Modal title={isEdit ? 'Editar Sprint' : 'Nuevo Sprint'} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
         <Field label="Nombre" required>
-          <input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} required placeholder="e.g. Sprint 1 — MVP" autoFocus />
+          <input style={inputStyle} className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} required placeholder="e.g. Sprint 1 — MVP" autoFocus />
         </Field>
 
         <Field label="Objetivo">
           <textarea
+            style={inputStyle}
             className={`${inputCls} resize-none`}
             rows={3}
             value={form.objective}
@@ -102,16 +127,16 @@ function SprintFormModal({ sprint, projectId, onClose, onSaved }) {
 
         <div className="grid grid-cols-2 gap-3">
           <Field label="Inicio" required>
-            <input className={inputCls} type="date" value={form.startDate} onChange={(e) => set('startDate', e.target.value)} required />
+            <input style={inputStyle} className={inputCls} type="date" value={form.startDate} onChange={(e) => set('startDate', e.target.value)} required />
           </Field>
           <Field label="Fin" required>
-            <input className={inputCls} type="date" value={form.endDate} onChange={(e) => set('endDate', e.target.value)} required />
+            <input style={inputStyle} className={inputCls} type="date" value={form.endDate} onChange={(e) => set('endDate', e.target.value)} required />
           </Field>
         </div>
 
         {isEdit && (
           <Field label="Estado">
-            <select className={inputCls} value={form.status} onChange={(e) => set('status', e.target.value)}>
+            <select style={inputStyle} className={inputCls} value={form.status} onChange={(e) => set('status', e.target.value)}>
               <option value="planned">Planeado</option>
               <option value="active">Activo</option>
               <option value="completed">Completado</option>
@@ -120,8 +145,8 @@ function SprintFormModal({ sprint, projectId, onClose, onSaved }) {
         )}
 
         <div className="flex gap-3 pt-1">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancelar</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} className={btnSecondary} style={btnSecondaryStyle}>Cancelar</button>
+          <button type="submit" disabled={saving} className={btnPrimary} style={btnPrimaryStyle}>
             {saving ? 'Guardando…' : isEdit ? 'Guardar cambios' : 'Crear Sprint'}
           </button>
         </div>
@@ -159,12 +184,12 @@ function SprintDetailModal({ sprint, allTasks, onClose, onTaskMoved }) {
   }
 
   const STATUS_PILL = {
-    backlog:     'bg-slate-100 text-slate-500',
-    ready:       'bg-sky-50 text-sky-700',
-    in_progress: 'bg-amber-50 text-amber-700',
-    in_review:   'bg-purple-50 text-purple-700',
-    blocked:     'bg-red-50 text-red-600',
-    done:        'bg-emerald-50 text-emerald-700',
+    backlog:     'bg-slate-600/20 text-slate-400 border border-slate-500/30',
+    ready:       'bg-sky-500/20 text-sky-400 border border-sky-500/30',
+    in_progress: 'bg-amber-500/20 text-amber-400 border border-amber-500/30',
+    in_review:   'bg-purple-500/20 text-purple-400 border border-purple-500/30',
+    blocked:     'bg-red-500/20 text-red-400 border border-red-500/30',
+    done:        'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
   }
 
   return (
@@ -172,14 +197,14 @@ function SprintDetailModal({ sprint, allTasks, onClose, onTaskMoved }) {
       <div className="space-y-5">
         {/* Objetivo */}
         {sprint.objective && (
-          <div className="bg-indigo-50 border border-indigo-100 rounded-lg px-4 py-3">
-            <p className="text-xs font-semibold text-indigo-600 mb-1">Objetivo del sprint</p>
-            <p className="text-sm text-indigo-900">{sprint.objective}</p>
+          <div className="rounded-lg px-4 py-3" style={{ backgroundColor: 'hsl(259, 100%, 15%)', border: '1px solid hsl(259, 100%, 30%)' }}>
+            <p className="text-xs font-semibold mb-1" style={{ color: 'hsl(259, 100%, 69%)' }}>Objetivo del sprint</p>
+            <p className="text-sm" style={{ color: 'hsl(224, 40%, 95%)' }}>{sprint.objective}</p>
           </div>
         )}
 
         {/* Meta */}
-        <div className="flex gap-4 text-xs text-slate-500">
+        <div className="flex gap-4 text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>
           <span>{fmt(sprint.startDate)} → {fmt(sprint.endDate)}</span>
           <span className={`font-semibold px-2 py-0.5 rounded-full ${STATUS_CLS[sprint.status]}`}>
             {STATUS_LABEL[sprint.status]}
@@ -188,24 +213,25 @@ function SprintDetailModal({ sprint, allTasks, onClose, onTaskMoved }) {
 
         {/* Tasks in sprint */}
         <div>
-          <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
+          <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'hsl(224, 30%, 70%)' }}>
             Tickets en este sprint ({sprintTasks.length})
           </p>
           {sprintTasks.length === 0 ? (
-            <p className="text-xs text-slate-400 py-2">Sin tickets asignados aún.</p>
+            <p className="text-xs py-2" style={{ color: 'hsl(224, 20%, 55%)' }}>Sin tickets asignados aún.</p>
           ) : (
             <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
               {sprintTasks.map((t) => (
-                <div key={t.id} className="flex items-center gap-2 bg-white border border-slate-100 rounded-lg px-3 py-2">
+                <div key={t.id} className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: 'hsl(224, 25%, 16%)', border: '1px solid hsl(224, 30%, 18%)' }}>
                   <span className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md ${STATUS_PILL[t.status] ?? STATUS_PILL.backlog}`}>
                     {t.status.replace('_', ' ')}
                   </span>
-                  <p className="flex-1 text-sm text-slate-800 truncate">{t.title}</p>
-                  {t.assignee && <span className="text-xs text-slate-400 shrink-0">{t.assignee.name}</span>}
+                  <p className="flex-1 text-sm truncate" style={{ color: 'hsl(224, 40%, 95%)' }}>{t.title}</p>
+                  {t.assignee && <span className="text-xs shrink-0" style={{ color: 'hsl(224, 20%, 55%)' }}>{t.assignee.name}</span>}
                   <button
                     onClick={() => handleRemove(t.id)}
                     disabled={removing === t.id}
-                    className="shrink-0 text-slate-300 hover:text-red-500 transition-colors"
+                    className="shrink-0 transition-colors"
+                    style={{ color: 'hsl(224, 20%, 55%)' }}
                     title="Quitar del sprint"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -221,18 +247,19 @@ function SprintDetailModal({ sprint, allTasks, onClose, onTaskMoved }) {
         {/* Backlog to add */}
         {backlogTasks.length > 0 && (
           <div>
-            <p className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">
+            <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: 'hsl(224, 30%, 70%)' }}>
               Agregar del backlog ({backlogTasks.length})
             </p>
             <div className="space-y-1.5 max-h-40 overflow-y-auto pr-1">
               {backlogTasks.map((t) => (
-                <div key={t.id} className="flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-lg px-3 py-2">
-                  <p className="flex-1 text-sm text-slate-700 truncate">{t.title}</p>
-                  {t.assignee && <span className="text-xs text-slate-400 shrink-0">{t.assignee.name}</span>}
+                <div key={t.id} className="flex items-center gap-2 rounded-lg px-3 py-2" style={{ backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(224, 30%, 18%)' }}>
+                  <p className="flex-1 text-sm truncate" style={{ color: 'hsl(224, 40%, 95%)' }}>{t.title}</p>
+                  {t.assignee && <span className="text-xs shrink-0" style={{ color: 'hsl(224, 20%, 55%)' }}>{t.assignee.name}</span>}
                   <button
                     onClick={() => handleAdd(t.id)}
                     disabled={adding}
-                    className="shrink-0 text-slate-300 hover:text-indigo-500 transition-colors"
+                    className="shrink-0 transition-colors"
+                    style={{ color: 'hsl(259, 100%, 69%)' }}
                     title="Agregar al sprint"
                   >
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
@@ -246,7 +273,7 @@ function SprintDetailModal({ sprint, allTasks, onClose, onTaskMoved }) {
         )}
 
         <div className="flex justify-end pt-1">
-          <button onClick={onClose} className={btnSecondary}>Cerrar</button>
+          <button onClick={onClose} className={btnSecondary} style={btnSecondaryStyle}>Cerrar</button>
         </div>
       </div>
     </Modal>
@@ -261,11 +288,11 @@ function SprintCard({ sprint, allTasks, onEdit, onDelete, onViewTasks }) {
   const pct = taskCount > 0 ? Math.round((doneCount / taskCount) * 100) : 0
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:border-indigo-200 transition-colors">
+    <div className="rounded-xl p-5 flex flex-col gap-3 transition-colors" style={{ backgroundColor: 'hsl(224, 25%, 16%)', border: '1px solid hsl(224, 30%, 18%)' }}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-slate-900 text-sm leading-snug truncate">{sprint.name}</p>
-          <p className="text-xs text-slate-400 mt-0.5">{fmt(sprint.startDate)} → {fmt(sprint.endDate)}</p>
+          <p className="font-semibold text-sm leading-snug truncate" style={{ color: 'hsl(224, 40%, 95%)' }}>{sprint.name}</p>
+          <p className="text-xs mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>{fmt(sprint.startDate)} → {fmt(sprint.endDate)}</p>
         </div>
         <span className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full ${STATUS_CLS[sprint.status]}`}>
           {STATUS_LABEL[sprint.status]}
@@ -273,19 +300,19 @@ function SprintCard({ sprint, allTasks, onEdit, onDelete, onViewTasks }) {
       </div>
 
       {sprint.objective && (
-        <p className="text-xs text-slate-500 leading-relaxed line-clamp-2">{sprint.objective}</p>
+        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: 'hsl(224, 20%, 55%)' }}>{sprint.objective}</p>
       )}
 
       {/* Progress bar */}
       <div>
-        <div className="flex items-center justify-between text-xs text-slate-400 mb-1">
+        <div className="flex items-center justify-between text-xs mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>
           <span>{taskCount} ticket{taskCount !== 1 ? 's' : ''}</span>
           <span>{pct}% completado</span>
         </div>
-        <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+        <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'hsl(224, 30%, 18%)' }}>
           <div
-            className="h-full bg-indigo-500 rounded-full transition-all duration-300"
-            style={{ width: `${pct}%` }}
+            className="h-full rounded-full transition-all duration-300"
+            style={{ width: `${pct}%`, backgroundColor: 'hsl(244, 100%, 69%)' }}
           />
         </div>
       </div>
@@ -293,19 +320,22 @@ function SprintCard({ sprint, allTasks, onEdit, onDelete, onViewTasks }) {
       <div className="flex items-center gap-2 pt-1">
         <button
           onClick={() => onViewTasks(sprint)}
-          className="flex-1 text-xs font-semibold px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg transition-colors"
+          className="flex-1 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
+          style={{ backgroundColor: 'hsl(244, 100%, 15%)', color: 'hsl(244, 100%, 69%)', border: '1px solid hsl(244, 100%, 30%)' }}
         >
           Ver tickets
         </button>
         <button
           onClick={() => onEdit(sprint)}
-          className="text-xs font-medium px-3 py-1.5 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
+          className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          style={{ border: '1px solid hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)', backgroundColor: 'transparent' }}
         >
           Editar
         </button>
         <button
           onClick={() => onDelete(sprint)}
-          className="text-xs font-medium px-3 py-1.5 border border-red-100 text-red-500 rounded-lg hover:bg-red-50 transition-colors"
+          className="text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
+          style={{ border: '1px solid hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)', backgroundColor: 'transparent' }}
         >
           Eliminar
         </button>
@@ -388,13 +418,14 @@ export default function AdminSprints() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold text-slate-900">Sprints</h1>
-            <p className="text-sm text-slate-500 mt-0.5">Organiza el trabajo por sprints y define los objetivos de cada uno.</p>
+            <h1 className="text-xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Sprints</h1>
+            <p className="text-sm mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Organiza el trabajo por sprints y define los objetivos de cada uno.</p>
           </div>
           {selectedProject && (
             <button
               onClick={() => setShowCreateModal(true)}
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors"
+              className="px-4 py-2 text-white text-sm font-semibold rounded-lg transition-colors"
+              style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)' }}
             >
               + Nuevo Sprint
             </button>
@@ -406,7 +437,8 @@ export default function AdminSprints() {
           <select
             value={selectedProject}
             onChange={(e) => setSelectedProject(e.target.value)}
-            className="text-sm border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            className="text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2"
+            style={inputStyle}
           >
             <option value="">Selecciona un proyecto</option>
             {projects.map((p) => (
@@ -415,20 +447,20 @@ export default function AdminSprints() {
           </select>
         </div>
 
-        {error && <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg mb-4">{error}</p>}
+        {error && <p className="text-sm px-4 py-3 rounded-lg mb-4" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
         {!selectedProject && (
-          <div className="text-center py-20 text-slate-400">
+          <div className="text-center py-20" style={{ color: 'hsl(224, 20%, 55%)' }}>
             <p className="text-sm">Selecciona un proyecto para ver sus sprints.</p>
           </div>
         )}
 
         {selectedProject && loading && (
-          <p className="text-sm text-slate-400">Cargando sprints…</p>
+          <p className="text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Cargando sprints…</p>
         )}
 
         {selectedProject && !loading && sprints.length === 0 && (
-          <div className="text-center py-20 text-slate-400">
+          <div className="text-center py-20" style={{ color: 'hsl(224, 20%, 55%)' }}>
             <p className="text-sm font-medium">Sin sprints aún.</p>
             <p className="text-xs mt-1">Crea el primero con el botón de arriba.</p>
           </div>
@@ -437,7 +469,7 @@ export default function AdminSprints() {
         {/* Sprint sections */}
         {active.length > 0 && (
           <section className="mb-8">
-            <p className="text-xs font-bold text-emerald-600 uppercase tracking-wide mb-3">Activo</p>
+            <p className="text-xs font-bold uppercase tracking-wide mb-3" style={{ color: 'hsl(120, 100%, 50%)' }}>Activo</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {active.map((s) => (
                 <SprintCard
@@ -455,7 +487,7 @@ export default function AdminSprints() {
 
         {planned.length > 0 && (
           <section className="mb-8">
-            <p className="text-xs font-bold text-slate-500 uppercase tracking-wide mb-3">Planeados</p>
+            <p className="text-xs font-bold uppercase tracking-wide mb-3" style={{ color: 'hsl(224, 20%, 55%)' }}>Planeados</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {planned.map((s) => (
                 <SprintCard
@@ -473,7 +505,7 @@ export default function AdminSprints() {
 
         {completed.length > 0 && (
           <section>
-            <p className="text-xs font-bold text-slate-400 uppercase tracking-wide mb-3">Completados</p>
+            <p className="text-xs font-bold uppercase tracking-wide mb-3" style={{ color: 'hsl(224, 20%, 55%)' }}>Completados</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {completed.map((s) => (
                 <SprintCard

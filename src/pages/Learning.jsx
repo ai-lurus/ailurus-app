@@ -6,9 +6,9 @@ import Layout from '../components/Layout.jsx'
 import { ChevronDownIcon, ChevronUpIcon, ArrowLeftIcon, SparklesIcon } from '../components/Icons.jsx'
 
 const STATUS_STYLES = {
-  pending:     'bg-slate-100 text-slate-500',
-  in_progress: 'bg-blue-50 text-blue-600 border border-blue-100',
-  completed:   'bg-emerald-50 text-emerald-600 border border-emerald-100',
+  pending:     'bg-slate-600/20 text-slate-400',
+  in_progress: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
+  completed:   'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
 }
 
 const STATUS_LABELS = {
@@ -49,13 +49,13 @@ function ResourceIcon({ type }) {
 function ProgressBar({ pct }) {
   return (
     <div className="flex items-center gap-3">
-      <div className="flex-1 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+      <div className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: 'hsl(224, 25%, 20%)' }}>
         <div
           className="h-1.5 bg-indigo-500 rounded-full transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs font-semibold text-slate-400 w-9 text-right">{pct}%</span>
+      <span className="text-xs font-semibold w-9 text-right" style={{ color: 'hsl(224, 20%, 55%)' }}>{pct}%</span>
     </div>
   )
 }
@@ -68,22 +68,23 @@ function TopicRow({ topic, onStatusChange, updating }) {
   }
 
   return (
-    <div className="flex items-start gap-3 py-3 px-4 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-      <span className="w-7 h-7 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
+    <div className="flex items-start gap-3 py-3 px-4 last:border-0 transition-colors" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)', backgroundColor: 'transparent' }}>
+      <span className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5" style={{ backgroundColor: 'hsl(224, 25%, 20%)', color: 'hsl(224, 20%, 55%)' }}>
         <ResourceIcon type={topic.resourceType} />
       </span>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-900 truncate">{topic.title}</p>
+        <p className="text-sm font-medium truncate" style={{ color: 'hsl(224, 40%, 95%)' }}>{topic.title}</p>
         {topic.description && (
-          <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">{topic.description}</p>
+          <p className="text-xs mt-0.5 line-clamp-1" style={{ color: 'hsl(224, 20%, 55%)' }}>{topic.description}</p>
         )}
         {topic.resourceUrl && (
           <a
             href={topic.resourceUrl}
             target="_blank"
             rel="noreferrer"
-            className="text-xs text-indigo-600 hover:underline mt-0.5 block truncate"
+            className="text-xs hover:underline mt-0.5 block truncate"
+            style={{ color: 'hsl(244, 100%, 69%)' }}
           >
             {topic.resourceUrl}
           </a>
@@ -97,7 +98,12 @@ function TopicRow({ topic, onStatusChange, updating }) {
         <button
           onClick={() => onStatusChange(topic.id, nextStatus[topic.status])}
           disabled={updating === topic.id}
-          className="text-xs text-indigo-600 hover:bg-indigo-50 border border-indigo-200 px-2 py-0.5 rounded-lg transition-colors disabled:opacity-40 cursor-pointer"
+          className="text-xs px-2 py-0.5 rounded-lg transition-colors disabled:opacity-40 cursor-pointer"
+          style={{
+            color: 'hsl(244, 100%, 69%)',
+            border: '1px solid hsl(244, 100%, 30%)',
+            backgroundColor: 'hsl(244, 100%, 10%)',
+          }}
           title="Cycle status"
         >
           {updating === topic.id ? '…' : '↻'}
@@ -111,7 +117,7 @@ function PathCard({ path, onTopicUpdate, updating }) {
   const [expanded, setExpanded] = useState(true)
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="rounded-2xl overflow-hidden shadow-sm" style={{ backgroundColor: 'hsl(224, 30%, 14%)', border: '1px solid hsl(224, 30%, 18%)' }}>
       <div
         className="px-5 py-4 cursor-pointer select-none"
         onClick={() => setExpanded((v) => !v)}
@@ -119,26 +125,26 @@ function PathCard({ path, onTopicUpdate, updating }) {
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-sm font-bold text-slate-900">{path.title}</h3>
+              <h3 className="text-sm font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>{path.title}</h3>
               {path.generatedByAI && (
-                <span className="text-xs bg-violet-50 text-violet-600 border border-violet-100 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
+                <span className="text-xs px-2 py-0.5 rounded-full font-medium flex items-center gap-1" style={{ backgroundColor: 'hsl(259, 100%, 15%)', color: 'hsl(259, 100%, 55%)', border: '1px solid hsl(259, 100%, 30%)' }}>
                   <SparklesIcon className="w-3 h-3" />
                   AI Generated
                 </span>
               )}
               {path.careerPath && (
-                <span className="text-xs bg-indigo-50 text-indigo-600 border border-indigo-100 px-2 py-0.5 rounded-full">
+                <span className="text-xs px-2 py-0.5 rounded-full" style={{ backgroundColor: 'hsl(244, 100%, 15%)', color: 'hsl(244, 100%, 69%)', border: '1px solid hsl(244, 100%, 30%)' }}>
                   {path.careerPath}
                 </span>
               )}
             </div>
             {path.description && (
-              <p className="text-xs text-slate-500 mt-1">{path.description}</p>
+              <p className="text-xs mt-1" style={{ color: 'hsl(224, 20%, 55%)' }}>{path.description}</p>
             )}
           </div>
           {expanded
-            ? <ChevronUpIcon className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
-            : <ChevronDownIcon className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+            ? <ChevronUpIcon className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }} />
+            : <ChevronDownIcon className="w-4 h-4 shrink-0 mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }} />
           }
         </div>
 
@@ -146,15 +152,15 @@ function PathCard({ path, onTopicUpdate, updating }) {
           <ProgressBar pct={path.progressPct} />
         </div>
 
-        <p className="text-xs text-slate-400 mt-2">
+        <p className="text-xs mt-2" style={{ color: 'hsl(224, 20%, 55%)' }}>
           {path.topics.length} topics · {path.topics.filter((t) => t.status === 'completed').length} completed
         </p>
       </div>
 
       {expanded && (
-        <div className="border-t border-slate-100">
+        <div style={{ borderTop: '1px solid hsl(224, 30%, 18%)' }}>
           {path.topics.length === 0 ? (
-            <p className="text-sm text-slate-400 px-5 py-4">No topics yet.</p>
+            <p className="text-sm px-5 py-4" style={{ color: 'hsl(224, 20%, 55%)' }}>No topics yet.</p>
           ) : (
             path.topics.map((topic) => (
               <TopicRow
@@ -219,7 +225,7 @@ export default function Learning() {
   if (loading || fetching) {
     return (
       <Layout>
-        <div className="flex items-center justify-center py-40 text-slate-400 text-sm">Loading…</div>
+        <div className="flex items-center justify-center py-40 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading…</div>
       </Layout>
     )
   }
@@ -228,7 +234,7 @@ export default function Learning() {
     return (
       <Layout>
         <div className="flex items-center justify-center py-40">
-          <p className="text-red-500 text-sm">{error}</p>
+          <p className="text-sm" style={{ color: 'hsl(0, 100%, 60%)' }}>{error}</p>
         </div>
       </Layout>
     )
@@ -241,45 +247,48 @@ export default function Learning() {
         <div className="mb-8">
           <button
             onClick={() => navigate('/home')}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 mb-3 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs mb-3 transition-colors cursor-pointer"
+            style={{ color: 'hsl(224, 20%, 55%)' }}
           >
             <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to home
           </button>
-          <h1 className="text-2xl font-bold text-slate-900">Learning & Growth</h1>
-          <p className="text-slate-500 mt-1 text-sm">Your career path and study plan.</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Learning & Growth</h1>
+          <p className="mt-1 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Your career path and study plan.</p>
         </div>
 
         {/* Battles banner */}
         <button
           onClick={() => navigate('/learning/battles')}
-          className="w-full mb-6 flex items-center justify-between gap-4 bg-amber-50 border border-amber-200 hover:bg-amber-100 rounded-2xl px-5 py-4 transition-colors cursor-pointer text-left"
+          className="w-full mb-6 flex items-center justify-between gap-4 rounded-2xl px-5 py-4 transition-colors cursor-pointer text-left"
+          style={{ backgroundColor: 'hsl(51, 100%, 10%)', border: '1px solid hsl(51, 100%, 20%)' }}
         >
           <div className="flex items-center gap-3">
             <span className="text-2xl">⚔️</span>
             <div>
-              <p className="text-sm font-bold text-amber-900">Learning Battles</p>
-              <p className="text-xs text-amber-700">Test your knowledge with interactive challenges</p>
+              <p className="text-sm font-bold" style={{ color: 'hsl(51, 100%, 60%)' }}>Learning Battles</p>
+              <p className="text-xs" style={{ color: 'hsl(51, 100%, 50%)' }}>Test your knowledge with interactive challenges</p>
             </div>
           </div>
-          <span className="text-amber-600 text-sm font-semibold shrink-0">Start →</span>
+          <span className="text-sm font-semibold shrink-0" style={{ color: 'hsl(51, 100%, 60%)' }}>Start →</span>
         </button>
 
         {/* Paths */}
         {paths.length === 0 ? (
-          <div className="bg-white border border-dashed border-slate-200 rounded-2xl p-10 text-center">
-            <div className="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 text-indigo-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+          <div className="rounded-2xl p-10 text-center" style={{ backgroundColor: 'hsl(224, 30%, 14%)', border: '1px dashed hsl(224, 30%, 18%)' }}>
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: 'hsl(244, 100%, 15%)' }}>
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="hsl(244, 100%, 69%)" >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
               </svg>
             </div>
-            <p className="text-slate-800 font-semibold">No learning paths yet</p>
-            <p className="text-sm text-slate-400 mt-1 max-w-xs mx-auto">
+            <p className="font-semibold" style={{ color: 'hsl(224, 40%, 95%)' }}>No learning paths yet</p>
+            <p className="text-sm mt-1 max-w-xs mx-auto" style={{ color: 'hsl(224, 20%, 55%)' }}>
               Ask the AI assistant on your home page to generate a plan, or wait for your admin to assign one.
             </p>
             <button
               onClick={() => navigate('/home')}
-              className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+              className="mt-4 px-4 py-2 text-white text-sm font-semibold rounded-lg transition-colors cursor-pointer"
+              style={{ backgroundColor: 'hsl(244, 100%, 69%)' }}
             >
               Go to AI Assistant →
             </button>

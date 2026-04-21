@@ -9,18 +9,18 @@ const STATUS_OPTIONS = ['on_track', 'at_risk', 'delayed', 'completed']
 const TYPE_OPTIONS = ['external', 'internal']
 
 const STATUS_STYLES = {
-  on_track:  'bg-green-100 text-green-800',
-  at_risk:   'bg-yellow-100 text-yellow-800',
-  delayed:   'bg-red-100 text-red-800',
-  completed: 'bg-gray-100 text-gray-600',
+  on_track:  { backgroundColor: 'hsl(120, 100%, 20%)', color: 'hsl(120, 100%, 50%)' },
+  at_risk:   { backgroundColor: 'hsl(51, 100%, 20%)', color: 'hsl(51, 100%, 50%)' },
+  delayed:   { backgroundColor: 'hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)' },
+  completed: { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' },
 }
 
 const ROLE_STYLES = {
-  developer: 'bg-blue-50 text-blue-700',
-  designer:  'bg-purple-50 text-purple-700',
-  admin:     'bg-orange-50 text-orange-700',
-  ceo:       'bg-red-50 text-red-700',
-  client:    'bg-gray-50 text-gray-600',
+  developer: { backgroundColor: 'hsl(210, 100%, 20%)', color: 'hsl(210, 100%, 60%)' },
+  designer:  { backgroundColor: 'hsl(270, 100%, 20%)', color: 'hsl(270, 100%, 60%)' },
+  admin:     { backgroundColor: 'hsl(25, 100%, 20%)', color: 'hsl(25, 100%, 60%)' },
+  ceo:       { backgroundColor: 'hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)' },
+  client:    { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' },
 }
 
 function formatDate(d) {
@@ -147,48 +147,52 @@ function TeamPanel({ projectId }) {
     return allUsers.filter((u) => !memberIds.has(u.id))
   }
 
-  if (loading) return <p className="text-sm text-gray-400 py-6 text-center">Loading teams…</p>
+  if (loading) return <p className="text-sm py-6 text-center" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading teams…</p>
 
   return (
     <div className="space-y-5">
-      {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+      {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
       {/* Existing teams */}
       {teams.map((team) => (
-        <div key={team.id} className="border border-gray-200 rounded-xl overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-200">
+        <div key={team.id} className="rounded-xl overflow-hidden" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
+          <div className="flex items-center justify-between px-4 py-2.5" style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
             {renamingId === team.id ? (
               <div className="flex items-center gap-2 flex-1 mr-2">
                 <input
-                  className="flex-1 px-2 py-1 text-sm border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                  className="flex-1 px-2 py-1 text-sm rounded-lg focus:outline-none focus:ring-2"
+                  style={{ backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(244, 100%, 69%)', color: 'hsl(224, 40%, 95%)', outline: 'none' }}
                   value={renameValue}
                   onChange={(e) => setRenameValue(e.target.value)}
                   autoFocus
                   onKeyDown={(e) => { if (e.key === 'Enter') handleRenameTeam(team.id); if (e.key === 'Escape') setRenamingId(null) }}
                 />
-                <button onClick={() => handleRenameTeam(team.id)} disabled={busy} className="text-xs text-indigo-600 font-semibold hover:text-indigo-800">Save</button>
-                <button onClick={() => setRenamingId(null)} className="text-xs text-gray-500 hover:text-gray-700">Cancel</button>
+                <button onClick={() => handleRenameTeam(team.id)} disabled={busy} className="text-xs font-semibold" style={{ color: 'hsl(244, 100%, 69%)' }}>Save</button>
+                <button onClick={() => setRenamingId(null)} className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>Cancel</button>
               </div>
             ) : (
-              <span className="text-sm font-semibold text-gray-800">{team.name}</span>
+              <span className="text-sm font-semibold" style={{ color: 'hsl(224, 40%, 95%)' }}>{team.name}</span>
             )}
             <div className="flex items-center gap-2 shrink-0">
               <button
                 onClick={() => { setAddingTo(addingTo === team.id ? null : team.id); setSelectedUser('') }}
-                className="text-xs font-medium text-indigo-600 hover:text-indigo-800 px-2.5 py-1 rounded-lg hover:bg-indigo-50 transition-colors"
+                className="text-xs font-medium px-2.5 py-1 rounded-lg transition-colors"
+                style={{ color: 'hsl(244, 100%, 69%)', backgroundColor: addingTo === team.id ? 'hsl(244, 100%, 20%)' : 'transparent' }}
               >
                 {addingTo === team.id ? 'Cancel' : '+ Add member'}
               </button>
               <button
                 onClick={() => { setRenamingId(team.id); setRenameValue(team.name) }}
-                className="text-xs text-gray-500 hover:text-gray-800 px-2 py-1 rounded-lg hover:bg-gray-200 transition-colors"
+                className="text-xs px-2 py-1 rounded-lg transition-colors"
+                style={{ color: 'hsl(224, 20%, 55%)', backgroundColor: 'transparent' }}
               >
                 Rename
               </button>
               <button
                 onClick={() => handleDeleteTeam(team.id, team.name)}
                 disabled={busy}
-                className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded-lg hover:bg-red-50 transition-colors disabled:opacity-40"
+                className="text-xs px-2 py-1 rounded-lg transition-colors disabled:opacity-40"
+                style={{ color: 'hsl(0, 100%, 60%)' }}
               >
                 Delete
               </button>
@@ -197,9 +201,9 @@ function TeamPanel({ projectId }) {
 
           {/* Add member row */}
           {addingTo === team.id && (
-            <div className="flex gap-2 px-4 py-3 bg-indigo-50/50 border-b border-gray-200">
+            <div className="flex gap-2 px-4 py-3" style={{ backgroundColor: 'hsl(244, 100%, 10%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
               <select
-                className={`${inputCls} flex-1`}
+                style={{ backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(224, 30%, 20%)', color: 'hsl(224, 40%, 95%)', borderRadius: '8px', padding: '8px 12px', fontSize: '14px', flex: 1 }}
                 value={selectedUser}
                 onChange={(e) => setSelectedUser(e.target.value)}
               >
@@ -211,7 +215,8 @@ function TeamPanel({ projectId }) {
               <button
                 disabled={!selectedUser || busy}
                 onClick={() => handleAddMember(team.id)}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+                style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)' }}
               >
                 {busy ? '…' : 'Add'}
               </button>
@@ -220,21 +225,22 @@ function TeamPanel({ projectId }) {
 
           {/* Members list */}
           {team.teamMembers.length === 0 ? (
-            <p className="text-xs text-gray-400 px-4 py-3">No members yet.</p>
+            <p className="text-xs px-4 py-3" style={{ color: 'hsl(224, 20%, 55%)' }}>No members yet.</p>
           ) : (
-            <ul className="divide-y divide-gray-100">
-              {team.teamMembers.map((m) => (
-                <li key={m.user.id} className="flex items-center justify-between px-4 py-2.5">
+            <ul style={{ borderTop: '1px solid hsl(224, 30%, 18%)' }}>
+              {team.teamMembers.map((m, idx) => (
+                <li key={m.user.id} className="flex items-center justify-between px-4 py-2.5" style={{ borderBottom: idx < team.teamMembers.length - 1 ? '1px solid hsl(224, 30%, 18%)' : 'none' }}>
                   <div>
-                    <span className="text-sm font-medium text-gray-800">{m.user.name}</span>
-                    <span className={`ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${ROLE_STYLES[m.user.role] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <span className="text-sm font-medium" style={{ color: 'hsl(224, 40%, 95%)' }}>{m.user.name}</span>
+                    <span className="ml-2 text-xs px-2 py-0.5 rounded-full font-medium" style={ROLE_STYLES[m.user.role] ?? { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' }}>
                       {m.user.role}
                     </span>
                   </div>
                   <button
                     disabled={busy}
                     onClick={() => handleRemoveMember(team.id, m.user.id)}
-                    className="text-xs text-red-500 hover:text-red-700 px-2 py-1 rounded hover:bg-red-50 transition-colors disabled:opacity-40"
+                    className="text-xs px-2 py-1 rounded transition-colors disabled:opacity-40"
+                    style={{ color: 'hsl(0, 100%, 60%)' }}
                   >
                     Remove
                   </button>
@@ -248,7 +254,7 @@ function TeamPanel({ projectId }) {
       {/* Create new team */}
       <form onSubmit={handleCreateTeam} className="flex gap-2">
         <input
-          className={`${inputCls} flex-1`}
+          style={{ backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(224, 30%, 20%)', color: 'hsl(224, 40%, 95%)', borderRadius: '8px', padding: '8px 12px', fontSize: '14px', flex: 1 }}
           placeholder="New team name…"
           value={newTeamName}
           onChange={(e) => setNewTeamName(e.target.value)}
@@ -256,7 +262,8 @@ function TeamPanel({ projectId }) {
         <button
           type="submit"
           disabled={creatingTeam || !newTeamName.trim()}
-          className="px-3 py-1.5 bg-gray-800 hover:bg-gray-900 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+          className="px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors disabled:opacity-50"
+          style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)' }}
         >
           {creatingTeam ? '…' : 'Create Team'}
         </button>
@@ -310,16 +317,17 @@ function EditModal({ project, onClose, onSaved }) {
   return (
     <Modal title={`Edit — ${project.name}`} onClose={onClose}>
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 border-b border-gray-200 -mt-1">
+      <div className="flex gap-1 mb-5 -mt-1" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
         {['details', 'team'].map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-4 py-2 text-sm font-medium capitalize transition-colors border-b-2 -mb-px ${
-              tab === t
-                ? 'border-indigo-600 text-indigo-600'
-                : 'border-transparent text-gray-500 hover:text-gray-800'
-            }`}
+            className={`px-4 py-2 text-sm font-medium capitalize transition-colors`}
+            style={{
+              borderBottom: tab === t ? '2px solid hsl(244, 100%, 69%)' : '2px solid transparent',
+              marginBottom: '-1px',
+              color: tab === t ? 'hsl(244, 100%, 69%)' : 'hsl(224, 20%, 55%)',
+            }}
           >
             {t}
           </button>
@@ -328,24 +336,24 @@ function EditModal({ project, onClose, onSaved }) {
 
       {tab === 'details' ? (
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+          {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
           <Field label="Project Name" required>
-            <input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} required />
+            <input style={inputStyle} value={form.name} onChange={(e) => set('name', e.target.value)} required />
           </Field>
 
           <Field label="Description">
-            <textarea className={`${inputCls} resize-none`} rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} />
+            <textarea style={{ ...inputStyle, resize: 'none' }} rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} />
           </Field>
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Type">
-              <select className={inputCls} value={form.type} onChange={(e) => set('type', e.target.value)}>
+              <select style={inputStyle} value={form.type} onChange={(e) => set('type', e.target.value)}>
                 {TYPE_OPTIONS.map((t) => <option key={t} value={t} className="capitalize">{t}</option>)}
               </select>
             </Field>
             <Field label="Status">
-              <select className={inputCls} value={form.status} onChange={(e) => set('status', e.target.value)}>
+              <select style={inputStyle} value={form.status} onChange={(e) => set('status', e.target.value)}>
                 {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
               </select>
             </Field>
@@ -353,20 +361,20 @@ function EditModal({ project, onClose, onSaved }) {
 
           <div className="grid grid-cols-2 gap-4">
             <Field label="Budget ($)">
-              <input className={inputCls} type="number" min="0" value={form.budget} onChange={(e) => set('budget', e.target.value)} placeholder="e.g. 50000" />
+              <input style={inputStyle} type="number" min="0" value={form.budget} onChange={(e) => set('budget', e.target.value)} placeholder="e.g. 50000" />
             </Field>
             <Field label="Deadline">
-              <input className={inputCls} type="date" value={form.deadline} onChange={(e) => set('deadline', e.target.value)} />
+              <input style={inputStyle} type="date" value={form.deadline} onChange={(e) => set('deadline', e.target.value)} />
             </Field>
           </div>
 
           <Field label="Client Name">
-            <input className={inputCls} value={form.clientName} onChange={(e) => set('clientName', e.target.value)} placeholder="e.g. Acme Corp" />
+            <input style={inputStyle} value={form.clientName} onChange={(e) => set('clientName', e.target.value)} placeholder="e.g. Acme Corp" />
           </Field>
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-            <button type="submit" disabled={saving} className={btnPrimary}>
+            <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+            <button type="submit" disabled={saving} style={btnPrimaryStyle}>
               {saving ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
@@ -422,24 +430,24 @@ function NewProjectModal({ onClose, onCreated }) {
   return (
     <Modal title="New Project" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
         <Field label="Project Name" required>
-          <input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} required />
+          <input style={inputStyle} value={form.name} onChange={(e) => set('name', e.target.value)} required />
         </Field>
 
         <Field label="Description">
-          <textarea className={`${inputCls} resize-none`} rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} />
+          <textarea style={{ ...inputStyle, resize: 'none' }} rows={2} value={form.description} onChange={(e) => set('description', e.target.value)} />
         </Field>
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Type">
-            <select className={inputCls} value={form.type} onChange={(e) => set('type', e.target.value)}>
+            <select style={inputStyle} value={form.type} onChange={(e) => set('type', e.target.value)}>
               {TYPE_OPTIONS.map((t) => <option key={t} value={t} className="capitalize">{t}</option>)}
             </select>
           </Field>
           <Field label="Status">
-            <select className={inputCls} value={form.status} onChange={(e) => set('status', e.target.value)}>
+            <select style={inputStyle} value={form.status} onChange={(e) => set('status', e.target.value)}>
               {STATUS_OPTIONS.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
             </select>
           </Field>
@@ -447,20 +455,20 @@ function NewProjectModal({ onClose, onCreated }) {
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Budget ($)">
-            <input className={inputCls} type="number" min="0" value={form.budget} onChange={(e) => set('budget', e.target.value)} placeholder="e.g. 50000" />
+            <input style={inputStyle} type="number" min="0" value={form.budget} onChange={(e) => set('budget', e.target.value)} placeholder="e.g. 50000" />
           </Field>
           <Field label="Deadline">
-            <input className={inputCls} type="date" value={form.deadline} onChange={(e) => set('deadline', e.target.value)} />
+            <input style={inputStyle} type="date" value={form.deadline} onChange={(e) => set('deadline', e.target.value)} />
           </Field>
         </div>
 
         <Field label="Client Name">
-          <input className={inputCls} value={form.clientName} onChange={(e) => set('clientName', e.target.value)} placeholder="e.g. Acme Corp" />
+          <input style={inputStyle} value={form.clientName} onChange={(e) => set('clientName', e.target.value)} placeholder="e.g. Acme Corp" />
         </Field>
 
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Creating…' : 'Create Project'}
           </button>
         </div>
@@ -506,54 +514,54 @@ export default function ProjectsTab() {
     }
   }
 
-  if (loading) return <p className="text-sm text-gray-400 py-8 text-center">Loading projects…</p>
-  if (error)   return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
+  if (loading) return <p className="text-sm py-8 text-center" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading projects…</p>
+  if (error)   return <p className="text-sm px-4 py-3 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xs text-gray-400">{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
-        <button onClick={() => setShowNewProject(true)} className={btnAction}>+ New Project</button>
+        <p className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>{projects.length} project{projects.length !== 1 ? 's' : ''}</p>
+        <button onClick={() => setShowNewProject(true)} style={btnActionStyle}>+ New Project</button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200">
+      <div className="overflow-hidden rounded-xl" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className={th}>Project</th>
-              <th className={th}>Type</th>
-              <th className={th}>Status</th>
-              <th className={th}>Budget</th>
-              <th className={th}>Deadline</th>
-              <th className={th}></th>
+            <tr style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+              <th style={thStyle}>Project</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Status</th>
+              <th style={thStyle}>Budget</th>
+              <th style={thStyle}>Deadline</th>
+              <th style={thStyle}></th>
             </tr>
           </thead>
           <tbody>
             {projects.map((p, i) => (
-              <tr key={p.id} className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
-                <td className={td}>
-                  <p className="font-medium text-gray-900">{p.name}</p>
-                  {p.clientName && <p className="text-xs text-gray-400 mt-0.5">{p.clientName}</p>}
+              <tr key={p.id} style={{ borderBottom: '1px solid hsl(224, 30%, 18%)', backgroundColor: i % 2 === 0 ? 'transparent' : 'hsl(224, 30%, 12%)' }}>
+                <td style={tdStyle}>
+                  <p className="font-medium">{p.name}</p>
+                  {p.clientName && <p className="text-xs mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>{p.clientName}</p>}
                 </td>
-                <td className={td}>
-                  <span className="capitalize text-gray-600">{p.type}</span>
+                <td style={tdStyle}>
+                  <span className="capitalize" style={{ color: 'hsl(224, 20%, 55%)' }}>{p.type}</span>
                 </td>
-                <td className={td}>
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${STATUS_STYLES[p.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                <td style={tdStyle}>
+                  <span className="text-xs font-medium px-2.5 py-1 rounded-full" style={STATUS_STYLES[p.status] ?? { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' }}>
                     {p.status.replace('_', ' ')}
                   </span>
                 </td>
-                <td className={td}>{formatCurrency(p.budget)}</td>
-                <td className={td}>{formatDate(p.deadline)}</td>
-                <td className={`${td} text-right`}>
+                <td style={tdStyle}>{formatCurrency(p.budget)}</td>
+                <td style={tdStyle}>{formatDate(p.deadline)}</td>
+                <td style={{ ...tdStyle, textAlign: 'right' }}>
                   <div className="flex items-center justify-end gap-2">
-                    <button onClick={() => navigate(`/projects/${p.id}`)} className="text-xs font-medium text-gray-500 hover:text-gray-800 px-3 py-1 rounded-lg hover:bg-gray-100 transition-colors">
+                    <button onClick={() => navigate(`/projects/${p.id}`)} className="text-xs font-medium px-3 py-1 rounded-lg transition-colors" style={{ color: 'hsl(224, 20%, 55%)' }}>
                       View
                     </button>
-                    <button onClick={() => setEditing(p)} className="text-xs font-medium text-indigo-600 hover:text-indigo-800 px-3 py-1 rounded-lg hover:bg-indigo-50 transition-colors">
+                    <button onClick={() => setEditing(p)} className="text-xs font-medium px-3 py-1 rounded-lg transition-colors" style={{ color: 'hsl(244, 100%, 69%)' }}>
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(p)} className="text-xs font-medium text-red-500 hover:text-red-700 px-3 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                    <button onClick={() => handleDelete(p)} className="text-xs font-medium px-3 py-1 rounded-lg transition-colors" style={{ color: 'hsl(0, 100%, 60%)' }}>
                       Delete
                     </button>
                   </div>
@@ -561,7 +569,7 @@ export default function ProjectsTab() {
               </tr>
             ))}
             {projects.length === 0 && (
-              <tr><td colSpan={6} className="text-center text-gray-400 py-10">No projects found.</td></tr>
+              <tr><td colSpan={6} className="text-center py-10" style={{ color: 'hsl(224, 20%, 55%)' }}>No projects found.</td></tr>
             )}
           </tbody>
         </table>
@@ -574,18 +582,18 @@ export default function ProjectsTab() {
 }
 
 // ── Shared style tokens ────────────────────────────────────────────────────────
-const inputCls     = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
-const btnPrimary   = 'flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors'
-const btnAction    = 'px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors'
-const th = 'text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'
-const td = 'px-4 py-3 text-gray-700'
+const inputStyle = { backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(224, 30%, 20%)', color: 'hsl(224, 40%, 95%)', borderRadius: '8px', padding: '8px 12px', fontSize: '14px', width: '100%' }
+const btnPrimaryStyle = { flex: 1, padding: '8px 16px', backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)', fontSize: '14px', fontWeight: '600', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s' }
+const btnSecondaryStyle = { padding: '8px 16px', border: '1px solid hsl(224, 30%, 18%)', color: 'hsl(224, 40%, 95%)', fontSize: '14px', fontWeight: '500', borderRadius: '8px', backgroundColor: 'transparent', cursor: 'pointer', transition: 'background-color 0.2s' }
+const btnActionStyle = { padding: '8px 16px', backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)', fontSize: '14px', fontWeight: '600', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s' }
+const thStyle = { textAlign: 'left', padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: 'hsl(224, 20%, 55%)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const tdStyle = { padding: '12px 16px', color: 'hsl(224, 40%, 95%)' }
 
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <label className="block text-xs font-medium mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>
+        {label}{required && <span style={{ color: 'hsl(0, 100%, 60%)', marginLeft: '2px' }}>*</span>}
       </label>
       {children}
     </div>

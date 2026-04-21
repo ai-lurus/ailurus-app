@@ -73,7 +73,7 @@ export default function TiptapEditor({ content, onChange, placeholder = 'Start w
   return (
     <div className="flex flex-col h-full">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-slate-200 bg-slate-50 rounded-t-lg sticky top-0 z-10">
+      <div className="flex flex-wrap items-center gap-0.5 px-3 py-2 border-b border-[hsl(224,30%,18%)] bg-[hsl(224,35%,10%)] rounded-t-lg sticky top-0 z-10">
         <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} title="Bold">B</ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} title="Italic"><em>I</em></ToolbarButton>
         <ToolbarButton onClick={() => editor.chain().focus().toggleStrike().run()} active={editor.isActive('strike')} title="Strikethrough"><s>S</s></ToolbarButton>

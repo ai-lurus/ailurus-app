@@ -3,10 +3,10 @@ import { getTodayStatus, submitDailyStatus } from '../api/dailyStatus.js'
 import { SunIcon, ClockIcon, CalendarIcon, WarningIcon, CheckCircleIcon } from './Icons.jsx'
 
 const MOODS = [
-  { value: 'great',      label: 'Great',     dot: 'bg-emerald-400', active: 'border-emerald-400 bg-emerald-50 text-emerald-700' },
-  { value: 'good',       label: 'Good',      dot: 'bg-sky-400',     active: 'border-sky-400 bg-sky-50 text-sky-700' },
-  { value: 'okay',       label: 'Okay',      dot: 'bg-amber-400',   active: 'border-amber-400 bg-amber-50 text-amber-700' },
-  { value: 'struggling', label: 'Rough day', dot: 'bg-rose-400',    active: 'border-rose-400 bg-rose-50 text-rose-700' },
+  { value: 'great',      label: 'Great',     dot: 'bg-emerald-400', active: 'border-emerald-400 bg-emerald-500/20 text-emerald-400' },
+  { value: 'good',       label: 'Good',      dot: 'bg-sky-400',     active: 'border-sky-400 bg-sky-500/20 text-sky-400' },
+  { value: 'okay',       label: 'Okay',      dot: 'bg-amber-400',   active: 'border-amber-400 bg-amber-500/20 text-amber-400' },
+  { value: 'struggling', label: 'Rough day', dot: 'bg-rose-400',    active: 'border-rose-400 bg-rose-500/20 text-rose-400' },
 ]
 
 const MOOD_SUMMARY = {
@@ -52,7 +52,7 @@ function CheckInForm({ onSubmit, submitting }) {
                 type="button"
                 onClick={() => setMood(m.value)}
                 className={`flex flex-col items-center gap-2 px-2 py-3 rounded-xl border-2 text-xs font-medium transition-all cursor-pointer ${
-                  isActive ? m.active : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300'
+                  isActive ? m.active : 'border-[hsl(224,30%,18%)] bg-[hsl(224,35%,10%)] text-[hsl(224,20%,55%)] hover:border-[hsl(224,30%,25%)]'
                 }`}
               >
                 <span className={`w-3 h-3 rounded-full ${m.dot}`} />
@@ -65,7 +65,7 @@ function CheckInForm({ onSubmit, submitting }) {
 
       {/* Available hours */}
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wide" style={{ color: 'hsl(224, 20%, 55%)' }}>
           Hours available today
         </label>
         <input
@@ -76,13 +76,19 @@ function CheckInForm({ onSubmit, submitting }) {
           value={availableHrs}
           onChange={(e) => setAvailableHrs(e.target.value)}
           placeholder="e.g. 6"
-          className="w-28 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 bg-white"
+          className="w-28 px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors"
+          style={{
+            backgroundColor: 'hsl(224, 25%, 16%)',
+            border: '1px solid hsl(224, 30%, 18%)',
+            color: 'hsl(224, 40%, 95%)',
+            focusRingColor: 'hsl(51, 100%, 50%)',
+          }}
         />
       </div>
 
       {/* Appointments */}
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wide" style={{ color: 'hsl(224, 20%, 55%)' }}>
           Appointments or commitments
         </label>
         <input
@@ -90,13 +96,20 @@ function CheckInForm({ onSubmit, submitting }) {
           value={appointments}
           onChange={(e) => setAppointments(e.target.value)}
           placeholder="e.g. Team standup at 10am, dentist at 3pm"
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-300 bg-white"
+          className="w-full px-3 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 transition-colors"
+          style={{
+            backgroundColor: 'hsl(224, 25%, 16%)',
+            border: '1px solid hsl(224, 30%, 18%)',
+            color: 'hsl(224, 40%, 95%)',
+            placeholderColor: 'hsl(224, 20%, 55%)',
+            focusRingColor: 'hsl(51, 100%, 50%)',
+          }}
         />
       </div>
 
       {/* Blockers */}
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1.5 uppercase tracking-wide">
+        <label className="block text-xs font-semibold mb-1.5 uppercase tracking-wide" style={{ color: 'hsl(224, 20%, 55%)' }}>
           Blockers from yesterday
         </label>
         <textarea
@@ -104,16 +117,24 @@ function CheckInForm({ onSubmit, submitting }) {
           value={blockers}
           onChange={(e) => setBlockers(e.target.value)}
           placeholder="Anything that slowed you down or is still unresolved…"
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-300 bg-white"
+          className="w-full px-3 py-2 rounded-lg text-sm resize-none focus:outline-none focus:ring-2 transition-colors"
+          style={{
+            backgroundColor: 'hsl(224, 25%, 16%)',
+            border: '1px solid hsl(224, 30%, 18%)',
+            color: 'hsl(224, 40%, 95%)',
+            placeholderColor: 'hsl(224, 20%, 55%)',
+            focusRingColor: 'hsl(51, 100%, 50%)',
+          }}
         />
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm" style={{ color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
       <button
         type="submit"
         disabled={submitting}
-        className="px-6 py-2.5 bg-amber-400 hover:bg-amber-500 text-white font-semibold text-sm rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+        className="px-6 py-2.5 text-white font-semibold text-sm rounded-lg transition-colors disabled:opacity-50 cursor-pointer"
+        style={{ backgroundColor: 'hsl(51, 100%, 50%)' }}
       >
         {submitting ? 'Saving…' : 'Start my day →'}
       </button>
@@ -188,7 +209,7 @@ export default function MorningCheckIn({ onStatusReady }) {
     <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
       <div className="flex items-center gap-2 mb-5">
         <SunIcon className="w-5 h-5 text-amber-500 shrink-0" />
-        <h2 className="text-base font-bold text-slate-900">Morning Check-in</h2>
+        <h2 className="text-base font-bold text-[hsl(224,40%,95%)]">Morning Check-in</h2>
         {isSubmitted && (
           <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
             <CheckCircleIcon className="w-3 h-3" />

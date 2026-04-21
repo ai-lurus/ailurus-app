@@ -10,11 +10,11 @@ const PROFILE_ROLES = ['developer', 'designer']
 const ROLE_OPTIONS = ['developer', 'designer', 'pm', 'ceo', 'admin']
 
 const ROLE_STYLES = {
-  developer: 'bg-blue-100 text-blue-800',
-  designer:  'bg-purple-100 text-purple-800',
-  pm:        'bg-orange-100 text-orange-800',
-  ceo:       'bg-indigo-100 text-indigo-800',
-  admin:     'bg-gray-100 text-gray-700',
+  developer: { backgroundColor: 'hsl(210, 100%, 20%)', color: 'hsl(210, 100%, 60%)' },
+  designer:  { backgroundColor: 'hsl(270, 100%, 20%)', color: 'hsl(270, 100%, 60%)' },
+  pm:        { backgroundColor: 'hsl(25, 100%, 20%)', color: 'hsl(25, 100%, 60%)' },
+  ceo:       { backgroundColor: 'hsl(244, 100%, 20%)', color: 'hsl(244, 100%, 69%)' },
+  admin:     { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' },
 }
 
 // ── New User Modal ────────────────────────────────────────────────────────────
@@ -45,29 +45,29 @@ function NewUserModal({ onClose, onCreated }) {
   return (
     <Modal title="Create New User" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
         <Field label="Full Name" required>
-          <input className={inputCls} value={form.name} onChange={(e) => set('name', e.target.value)} required placeholder="e.g. Jane Smith" />
+          <input style={inputStyle} value={form.name} onChange={(e) => set('name', e.target.value)} required placeholder="e.g. Jane Smith" />
         </Field>
 
         <Field label="Email" required>
-          <input className={inputCls} type="email" value={form.email} onChange={(e) => set('email', e.target.value)} required placeholder="e.g. jane@company.com" />
+          <input style={inputStyle} type="email" value={form.email} onChange={(e) => set('email', e.target.value)} required placeholder="e.g. jane@company.com" />
         </Field>
 
         <Field label="Role" required>
-          <select className={inputCls} value={form.role} onChange={(e) => set('role', e.target.value)}>
+          <select style={inputStyle} value={form.role} onChange={(e) => set('role', e.target.value)}>
             {ROLE_OPTIONS.map((r) => <option key={r} value={r} className="capitalize">{r}</option>)}
           </select>
         </Field>
 
         <Field label="Temporary Password" required>
-          <input className={inputCls} type="password" value={form.password} onChange={(e) => set('password', e.target.value)} required placeholder="Min. 8 characters" minLength={8} />
+          <input style={inputStyle} type="password" value={form.password} onChange={(e) => set('password', e.target.value)} required placeholder="Min. 8 characters" minLength={8} />
         </Field>
 
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Creating…' : 'Create User'}
           </button>
         </div>
@@ -101,15 +101,15 @@ function EditRoleModal({ user, onClose, onUpdated }) {
   return (
     <Modal title={`Edit Role — ${user.name}`} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
         <Field label="Role" required>
-          <select className={inputCls} value={role} onChange={(e) => setRole(e.target.value)}>
+          <select style={inputStyle} value={role} onChange={(e) => setRole(e.target.value)}>
             {ROLE_OPTIONS.map((r) => <option key={r} value={r} className="capitalize">{r}</option>)}
           </select>
         </Field>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Saving…' : 'Save'}
           </button>
         </div>
@@ -144,8 +144,8 @@ function AddMemberModal({ team, allUsers, currentMemberIds, onClose, onAdded }) 
   if (available.length === 0) {
     return (
       <Modal title={`Add Member — ${team.name}`} onClose={onClose}>
-        <p className="text-sm text-gray-500 py-4">All users are already in this team.</p>
-        <button onClick={onClose} className={btnSecondary}>Close</button>
+        <p className="text-sm py-4" style={{ color: 'hsl(224, 20%, 55%)' }}>All users are already in this team.</p>
+        <button onClick={onClose} style={btnSecondaryStyle}>Close</button>
       </Modal>
     )
   }
@@ -153,17 +153,17 @@ function AddMemberModal({ team, allUsers, currentMemberIds, onClose, onAdded }) 
   return (
     <Modal title={`Add Member — ${team.name}`} onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
         <Field label="Select User" required>
-          <select className={inputCls} value={userId} onChange={(e) => setUserId(e.target.value)}>
+          <select style={inputStyle} value={userId} onChange={(e) => setUserId(e.target.value)}>
             {available.map((u) => (
               <option key={u.id} value={u.id}>{u.name} ({u.role})</option>
             ))}
           </select>
         </Field>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Adding…' : 'Add Member'}
           </button>
         </div>
@@ -198,18 +198,18 @@ function NewTeamModal({ projects, onClose, onCreated }) {
   return (
     <Modal title="Create New Team" onClose={onClose}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
         <Field label="Project" required>
-          <select className={inputCls} value={projectId} onChange={(e) => setProjectId(e.target.value)}>
+          <select style={inputStyle} value={projectId} onChange={(e) => setProjectId(e.target.value)}>
             {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
         </Field>
         <Field label="Team Name" required>
-          <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Frontend Team" />
+          <input style={inputStyle} value={name} onChange={(e) => setName(e.target.value)} required placeholder="e.g. Frontend Team" />
         </Field>
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Creating…' : 'Create Team'}
           </button>
         </div>
@@ -307,8 +307,8 @@ export default function TeamTab() {
     }
   }
 
-  if (loading) return <p className="text-sm text-gray-400 py-8 text-center">Loading team data…</p>
-  if (error)   return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
+  if (loading) return <p className="text-sm py-8 text-center" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading team data…</p>
+  if (error)   return <p className="text-sm px-4 py-3 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>
 
   return (
     <div className="space-y-8">
@@ -316,19 +316,19 @@ export default function TeamTab() {
       {/* ── User Directory ── */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">User Directory</h2>
-          <button onClick={() => setShowNewUser(true)} className={btnAction}>+ New User</button>
+          <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'hsl(224, 40%, 95%)' }}>User Directory</h2>
+          <button onClick={() => setShowNewUser(true)} style={btnActionStyle}>+ New User</button>
         </div>
-        <div className="overflow-hidden rounded-xl border border-gray-200">
+        <div className="overflow-hidden rounded-xl" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className={th}>Name</th>
-                <th className={th}>Email</th>
-                <th className={th}>Role</th>
-                <th className={th}>Teams</th>
-                <th className={th}>Status</th>
-                <th className={th}></th>
+              <tr style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+                <th style={thStyle}>Name</th>
+                <th style={thStyle}>Email</th>
+                <th style={thStyle}>Role</th>
+                <th style={thStyle}>Teams</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}></th>
               </tr>
             </thead>
             <tbody>
@@ -338,41 +338,43 @@ export default function TeamTab() {
                   <tr
                     key={u.id}
                     onClick={() => isClickable && setSelectedUser(u)}
-                    className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-50/50'} ${isClickable ? 'cursor-pointer hover:bg-indigo-50/40 transition-colors' : ''} ${!u.active ? 'opacity-50' : ''}`}
+                    style={{ borderBottom: '1px solid hsl(224, 30%, 18%)', backgroundColor: i % 2 === 0 ? 'transparent' : 'hsl(224, 30%, 12%)', opacity: !u.active ? 0.5 : 1, cursor: isClickable ? 'pointer' : 'default' }}
                   >
-                    <td className={td}>
-                      <p className="font-medium text-gray-900">
+                    <td style={tdStyle}>
+                      <p className="font-medium">
                         {u.name}
-                        {isClickable && <span className="ml-1.5 text-xs text-indigo-400">↗</span>}
+                        {isClickable && <span className="ml-1.5 text-xs" style={{ color: 'hsl(244, 100%, 69%)' }}>↗</span>}
                       </p>
                     </td>
-                    <td className={td}><p className="text-gray-500">{u.email}</p></td>
-                    <td className={td}>
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${ROLE_STYLES[u.role] ?? 'bg-gray-100 text-gray-600'}`}>
+                    <td style={tdStyle}><p style={{ color: 'hsl(224, 20%, 55%)' }}>{u.email}</p></td>
+                    <td style={tdStyle}>
+                      <span className="text-xs font-medium px-2.5 py-1 rounded-full capitalize" style={ROLE_STYLES[u.role] ?? { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' }}>
                         {u.role}
                       </span>
                     </td>
-                    <td className={td}>
-                      <p className="text-gray-500 text-xs">
+                    <td style={tdStyle}>
+                      <p className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>
                         {u.teamMembers?.map((m) => m.team?.name).filter(Boolean).join(', ') || '—'}
                       </p>
                     </td>
-                    <td className={td}>
-                      <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${u.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                    <td style={tdStyle}>
+                      <span className="text-xs font-medium px-2 py-0.5 rounded-full" style={u.active ? { backgroundColor: 'hsl(120, 100%, 20%)', color: 'hsl(120, 100%, 50%)' } : { backgroundColor: 'hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)' }}>
                         {u.active ? 'Active' : 'Inactive'}
                       </span>
                     </td>
-                    <td className={td}>
+                    <td style={tdStyle}>
                       <div className="flex items-center gap-2">
                         <button
                           onClick={(e) => { e.stopPropagation(); setEditingRole(u) }}
-                          className="text-xs text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-colors"
+                          className="text-xs px-2 py-1 rounded-lg transition-colors"
+                          style={{ color: 'hsl(244, 100%, 69%)' }}
                         >
                           Edit role
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleActive(u) }}
-                          className={`text-xs px-2 py-1 rounded-lg transition-colors ${u.active ? 'text-red-500 hover:text-red-700 hover:bg-red-50' : 'text-green-600 hover:text-green-800 hover:bg-green-50'}`}
+                          className="text-xs px-2 py-1 rounded-lg transition-colors"
+                          style={{ color: u.active ? 'hsl(0, 100%, 60%)' : 'hsl(120, 100%, 50%)' }}
                         >
                           {u.active ? 'Deactivate' : 'Activate'}
                         </button>
@@ -382,7 +384,7 @@ export default function TeamTab() {
                 )
               })}
               {users.length === 0 && (
-                <tr><td colSpan={5} className="text-center text-gray-400 py-10">No users found.</td></tr>
+                <tr><td colSpan={5} className="text-center py-10" style={{ color: 'hsl(224, 20%, 55%)' }}>No users found.</td></tr>
               )}
             </tbody>
           </table>
@@ -392,50 +394,53 @@ export default function TeamTab() {
       {/* ── Project Teams ── */}
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">Project Teams</h2>
-          <button onClick={() => setShowNewTeam(true)} className={btnAction}>+ New Team</button>
+          <h2 className="text-sm font-semibold uppercase tracking-wide" style={{ color: 'hsl(224, 40%, 95%)' }}>Project Teams</h2>
+          <button onClick={() => setShowNewTeam(true)} style={btnActionStyle}>+ New Team</button>
         </div>
         <div className="space-y-4">
           {projects.map((p) => {
             const teams = teamsByProject[p.id] ?? []
             return (
-              <div key={p.id} className="rounded-xl border border-gray-200 overflow-hidden">
-                <div className="bg-gray-50 border-b border-gray-200 px-4 py-2.5">
-                  <p className="text-sm font-semibold text-gray-800">{p.name}</p>
+              <div key={p.id} className="rounded-xl overflow-hidden" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
+                <div className="px-4 py-2.5" style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+                  <p className="text-sm font-semibold" style={{ color: 'hsl(224, 40%, 95%)' }}>{p.name}</p>
                 </div>
                 {teams.length === 0 ? (
-                  <p className="text-sm text-gray-400 px-4 py-4">No teams for this project.</p>
+                  <p className="text-sm px-4 py-4" style={{ color: 'hsl(224, 20%, 55%)' }}>No teams for this project.</p>
                 ) : (
-                  <div className="divide-y divide-gray-100">
-                    {teams.map((team) => {
+                  <div style={{ borderTop: '1px solid hsl(224, 30%, 18%)' }}>
+                    {teams.map((team, idx) => {
                       const memberIds = new Set(team.teamMembers.map((m) => m.userId))
                       return (
-                        <div key={team.id} className="px-4 py-3">
+                        <div key={team.id} className="px-4 py-3" style={{ borderBottom: idx < teams.length - 1 ? '1px solid hsl(224, 30%, 18%)' : 'none' }}>
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-medium text-gray-700">{team.name}</p>
+                            <p className="text-sm font-medium" style={{ color: 'hsl(224, 40%, 95%)' }}>{team.name}</p>
                             <button
                               onClick={() => setAddingMemberTo({ team, projectId: p.id })}
-                              className="text-xs text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 px-2 py-1 rounded-lg transition-colors"
+                              className="text-xs px-2 py-1 rounded-lg transition-colors"
+                              style={{ color: 'hsl(244, 100%, 69%)' }}
                             >
                               + Add Member
                             </button>
                           </div>
                           <div className="flex flex-wrap gap-2">
                             {team.teamMembers.length === 0 && (
-                              <span className="text-xs text-gray-400">No members yet.</span>
+                              <span className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>No members yet.</span>
                             )}
                             {team.teamMembers.map((m) => {
                               const memberUser = users.find((u) => u.id === m.userId) ?? m.user
                               return (
                                 <span
                                   key={m.userId}
-                                  className="inline-flex items-center gap-1 text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full"
+                                  className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full"
+                                  style={{ backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 40%, 95%)' }}
                                 >
                                   {memberUser?.name ?? 'Unknown'}
                                   <button
                                     onClick={() => handleRemoveMember(team, m.userId, p.id)}
-                                    className="text-gray-400 hover:text-red-500 leading-none ml-0.5"
+                                    className="leading-none ml-0.5"
                                     title="Remove"
+                                    style={{ color: 'hsl(224, 20%, 55%)', cursor: 'pointer' }}
                                   >
                                     ×
                                   </button>
@@ -452,7 +457,7 @@ export default function TeamTab() {
             )
           })}
           {projects.length === 0 && (
-            <p className="text-sm text-gray-400 py-4">No projects found.</p>
+            <p className="text-sm py-4" style={{ color: 'hsl(224, 20%, 55%)' }}>No projects found.</p>
           )}
         </div>
       </section>
@@ -498,18 +503,18 @@ export default function TeamTab() {
 }
 
 // ── Shared style tokens ────────────────────────────────────────────────────────
-const inputCls    = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
-const btnPrimary  = 'flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors'
-const btnAction   = 'text-xs font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors'
-const th = 'text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'
-const td = 'px-4 py-3 text-gray-700'
+const inputStyle = { width: '100%', padding: '8px 12px', fontSize: '14px', border: '1px solid hsl(224, 30%, 20%)', borderRadius: '8px', backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 40%, 95%)', outline: 'none' }
+const btnPrimaryStyle = { flex: 1, padding: '8px 16px', backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)', fontSize: '14px', fontWeight: '600', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s', opacity: 1 }
+const btnSecondaryStyle = { padding: '8px 16px', border: '1px solid hsl(224, 30%, 18%)', color: 'hsl(224, 40%, 95%)', fontSize: '14px', fontWeight: '500', borderRadius: '8px', backgroundColor: 'transparent', cursor: 'pointer', transition: 'background-color 0.2s' }
+const btnActionStyle = { fontSize: '12px', fontWeight: '500', color: 'hsl(244, 100%, 69%)', border: '1px solid hsl(244, 100%, 30%)', backgroundColor: 'transparent', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', transition: 'background-color 0.2s' }
+const thStyle = { textAlign: 'left', padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: 'hsl(224, 20%, 55%)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const tdStyle = { padding: '12px 16px', color: 'hsl(224, 40%, 95%)' }
 
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <label className="block text-xs font-medium mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>
+        {label}{required && <span style={{ color: 'hsl(0, 100%, 60%)', marginLeft: '2px' }}>*</span>}
       </label>
       {children}
     </div>

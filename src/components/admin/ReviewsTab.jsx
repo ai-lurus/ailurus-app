@@ -12,8 +12,8 @@ function formatDate(d) {
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-const th = 'text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'
-const td = 'px-4 py-3 text-gray-700 text-sm'
+const thStyle = { textAlign: 'left', padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: 'hsl(224, 20%, 55%)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const tdStyle = { padding: '12px 16px', color: 'hsl(224, 40%, 95%)', fontSize: '14px' }
 
 export default function ReviewsTab() {
   const [tasks, setTasks]       = useState([])
@@ -40,60 +40,62 @@ export default function ReviewsTab() {
     }
   }
 
-  if (loading) return <p className="text-sm text-gray-400 py-8 text-center">Loading…</p>
-  if (error)   return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
+  if (loading) return <p className="text-sm py-8 text-center" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading…</p>
+  if (error)   return <p className="text-sm px-4 py-3 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-sm font-semibold text-gray-900">Pending Code Reviews</h3>
-          <p className="text-xs text-gray-400 mt-0.5">Tasks submitted for code review before being marked done.</p>
+          <h3 className="text-sm font-semibold" style={{ color: 'hsl(224, 40%, 95%)' }}>Pending Code Reviews</h3>
+          <p className="text-xs mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Tasks submitted for code review before being marked done.</p>
         </div>
-        <span className="text-xs text-gray-400">{tasks.length} pending</span>
+        <span className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>{tasks.length} pending</span>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200">
+      <div className="overflow-hidden rounded-xl" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className={th}>Task</th>
-              <th className={th}>Project</th>
-              <th className={th}>Owner</th>
-              <th className={th}>PR Link</th>
-              <th className={th}>Date</th>
-              <th className={th}></th>
+            <tr style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+              <th style={thStyle}>Task</th>
+              <th style={thStyle}>Project</th>
+              <th style={thStyle}>Owner</th>
+              <th style={thStyle}>PR Link</th>
+              <th style={thStyle}>Date</th>
+              <th style={thStyle}></th>
             </tr>
           </thead>
           <tbody>
             {tasks.map((task, i) => (
-              <tr key={task.id} className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
-                <td className={td}>
-                  <p className="font-medium text-gray-900">{task.title}</p>
-                  {task.sprint && <p className="text-xs text-gray-400 mt-0.5">{task.sprint.name}</p>}
+              <tr key={task.id} style={{ borderBottom: '1px solid hsl(224, 30%, 18%)', backgroundColor: i % 2 === 0 ? 'transparent' : 'hsl(224, 30%, 12%)' }}>
+                <td style={tdStyle}>
+                  <p className="font-medium">{task.title}</p>
+                  {task.sprint && <p className="text-xs mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>{task.sprint.name}</p>}
                 </td>
-                <td className={td}>{task.project?.name ?? '—'}</td>
-                <td className={td}>{task.assignee?.name ?? '—'}</td>
-                <td className={td}>
+                <td style={tdStyle}>{task.project?.name ?? '—'}</td>
+                <td style={tdStyle}>{task.assignee?.name ?? '—'}</td>
+                <td style={tdStyle}>
                   {task.prLink ? (
                     <a
                       href={task.prLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-purple-600 hover:text-purple-800 font-medium text-xs"
+                      className="font-medium text-xs"
+                      style={{ color: 'hsl(270, 100%, 60%)' }}
                     >
                       View PR →
                     </a>
                   ) : (
-                    <span className="text-gray-400">—</span>
+                    <span style={{ color: 'hsl(224, 20%, 55%)' }}>—</span>
                   )}
                 </td>
-                <td className={td}>{formatDate(task.updatedAt)}</td>
-                <td className={`${td} text-right`}>
+                <td style={tdStyle}>{formatDate(task.updatedAt)}</td>
+                <td style={{ ...tdStyle, textAlign: 'right' }}>
                   <button
                     onClick={() => handleApprove(task.id)}
                     disabled={approving.has(task.id)}
-                    className="text-xs font-semibold px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors disabled:opacity-50"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                    style={{ backgroundColor: 'hsl(120, 100%, 50%)', color: 'hsl(224, 30%, 14%)' }}
                   >
                     {approving.has(task.id) ? 'Approving…' : 'Approve'}
                   </button>
@@ -102,7 +104,7 @@ export default function ReviewsTab() {
             ))}
             {tasks.length === 0 && (
               <tr>
-                <td colSpan={6} className="text-center text-gray-400 py-10">No tasks pending review.</td>
+                <td colSpan={6} className="text-center py-10" style={{ color: 'hsl(224, 20%, 55%)' }}>No tasks pending review.</td>
               </tr>
             )}
           </tbody>

@@ -37,12 +37,14 @@ function SummaryBar({ projects }) {
       {stats.map(({ label, value, accent }) => (
         <div
           key={label}
-          className={`rounded-xl p-5 border ${
-            accent ? 'bg-red-50 border-red-200' : 'bg-white border-slate-200'
-          }`}
+          className="rounded-xl p-5 border"
+          style={{
+            backgroundColor: accent ? 'hsl(0, 100%, 10%)' : 'hsl(224, 30%, 14%)',
+            borderColor: accent ? 'hsl(0, 100%, 20%)' : 'hsl(224, 30%, 18%)',
+          }}
         >
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-2">{label}</p>
-          <p className={`text-3xl font-bold ${accent ? 'text-red-500' : 'text-slate-900'}`}>{value}</p>
+          <p className="text-xs font-medium uppercase tracking-wide mb-2" style={{ color: 'hsl(224, 20%, 55%)' }}>{label}</p>
+          <p className="text-3xl font-bold" style={{ color: accent ? 'hsl(0, 100%, 60%)' : 'hsl(224, 40%, 95%)' }}>{value}</p>
         </div>
       ))}
     </div>
@@ -56,10 +58,14 @@ function ProjectCard({ project }) {
   return (
     <button
       onClick={() => navigate(`/projects/${project.id}`)}
-      className="w-full text-left bg-white rounded-xl border border-slate-200 p-5 hover:border-indigo-300 hover:shadow-md hover:shadow-indigo-500/5 transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      className="w-full text-left rounded-xl border p-5 hover:border-indigo-400 hover:shadow-md transition-all duration-150 cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-400"
+      style={{
+        backgroundColor: 'hsl(224, 30%, 14%)',
+        borderColor: 'hsl(224, 30%, 18%)',
+      }}
     >
       <div className="flex items-start justify-between gap-3 mb-3">
-        <h3 className="font-semibold text-slate-900 text-sm leading-snug">{project.name}</h3>
+        <h3 className="font-semibold text-sm leading-snug" style={{ color: 'hsl(224, 40%, 95%)' }}>{project.name}</h3>
         <span className={`shrink-0 text-xs font-semibold px-2.5 py-0.5 rounded-full flex items-center gap-1.5 ${status.classes}`}>
           <span className={`w-1.5 h-1.5 rounded-full ${status.dot}`} />
           {status.label}
@@ -67,22 +73,22 @@ function ProjectCard({ project }) {
       </div>
 
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-xs font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 capitalize">
+        <span className="text-xs font-medium px-2 py-0.5 rounded-md capitalize" style={{ backgroundColor: 'hsl(224, 25%, 20%)', color: 'hsl(224, 20%, 55%)' }}>
           {project.type}
         </span>
         {project.client?.name && (
-          <span className="text-xs text-slate-400">{project.client.name}</span>
+          <span className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>{project.client.name}</span>
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+      <div className="grid grid-cols-2 gap-3 pt-3" style={{ borderTop: '1px solid hsl(224, 30%, 18%)' }}>
         <div>
-          <p className="text-slate-400 text-xs mb-0.5">Budget</p>
-          <p className="text-sm font-semibold text-slate-700">{formatCurrency(project.budget)}</p>
+          <p className="text-xs mb-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Budget</p>
+          <p className="text-sm font-semibold" style={{ color: 'hsl(224, 30%, 85%)' }}>{formatCurrency(project.budget)}</p>
         </div>
         <div>
-          <p className="text-slate-400 text-xs mb-0.5">Deadline</p>
-          <p className="text-sm font-semibold text-slate-700">{formatDate(project.deadline)}</p>
+          <p className="text-xs mb-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Deadline</p>
+          <p className="text-sm font-semibold" style={{ color: 'hsl(224, 30%, 85%)' }}>{formatDate(project.deadline)}</p>
         </div>
       </div>
     </button>
@@ -96,11 +102,16 @@ function FilterBar({ active, onChange }) {
         <button
           key={f}
           onClick={() => onChange(f)}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+          className="px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer"
+          style={
             active === f
-              ? 'bg-indigo-600 text-white'
-              : 'bg-white text-slate-600 border border-slate-200 hover:border-indigo-300 hover:text-indigo-600'
-          }`}
+              ? { backgroundColor: 'hsl(244, 100%, 69%)', color: 'white' }
+              : {
+                  backgroundColor: 'hsl(224, 30%, 14%)',
+                  color: 'hsl(224, 20%, 55%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                }
+          }
         >
           {f}
         </button>
@@ -133,16 +144,16 @@ export default function Dashboard() {
     <Layout>
       <div className="px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-slate-900">Project Overview</h1>
-          <p className="text-slate-500 mt-1 text-sm">All active and upcoming projects</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Project Overview</h1>
+          <p className="mt-1 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>All active and upcoming projects</p>
         </div>
 
         {loading && (
-          <div className="flex justify-center py-20 text-slate-400 text-sm">Loading projects…</div>
+          <div className="flex justify-center py-20 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading projects…</div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-5 py-4 text-sm">
+          <div className="rounded-xl px-5 py-4 text-sm" style={{ backgroundColor: 'hsl(0, 100%, 10%)', border: '1px solid hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)' }}>
             {error}
           </div>
         )}
@@ -153,7 +164,7 @@ export default function Dashboard() {
             <FilterBar active={filter} onChange={setFilter} />
 
             {filtered.length === 0 ? (
-              <div className="text-center py-16 text-slate-400 text-sm">No projects match this filter.</div>
+              <div className="text-center py-16 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>No projects match this filter.</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filtered.map((project) => (

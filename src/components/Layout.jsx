@@ -47,15 +47,15 @@ export default function Layout({ children }) {
   const navItems = user ? (NAV_BY_ROLE[user.role] ?? []) : []
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen" style={{ backgroundColor: 'hsl(224, 35%, 10%)' }}>
       {/* ── Sidebar ── */}
-      <aside className="w-56 bg-slate-900 flex flex-col shrink-0 fixed inset-y-0 left-0 z-20">
+      <aside className="w-56 flex flex-col shrink-0 fixed inset-y-0 left-0 z-20" style={{ backgroundColor: 'hsl(224, 45%, 7%)' }}>
         {/* Brand */}
-        <div className="px-4 h-16 flex items-center gap-3 border-b border-slate-800 shrink-0">
+        <div className="px-4 h-16 flex items-center gap-3 shrink-0" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
           <img src="/favicon-64.png" alt="ai-lurus" className="w-8 h-8 rounded-lg shrink-0" />
           <div className="min-w-0">
             <p className="text-white font-semibold text-sm tracking-tight leading-none">ai-lurus.</p>
-            <p className="text-[9px] font-semibold tracking-[0.12em] uppercase leading-none mt-0.5 truncate" style={{ color: '#00D4FF' }}>
+            <p className="text-[9px] font-semibold tracking-[0.12em] uppercase leading-none mt-0.5 truncate" style={{ color: 'hsl(187, 100%, 50%)' }}>
               CONFIANZA EN TECNOLOGÍA
             </p>
           </div>
@@ -69,10 +69,17 @@ export default function Layout({ children }) {
               <button
                 key={path}
                 onClick={() => navigate(path)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer ${
-                  active
-                    ? 'bg-indigo-600/20 text-indigo-400'
-                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-100'
+                style={
+                  active ? {
+                    background: 'linear-gradient(135deg, hsl(244 100% 69% / 0.15), hsl(187 100% 50% / 0.08))',
+                    color: 'white',
+                    borderLeft: '2px solid hsl(244, 100%, 69%)',
+                  } : {
+                    color: 'hsl(224, 20%, 55%)',
+                  }
+                }
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer pl-2.5 ${
+                  !active && 'hover:bg-slate-800/40 hover:text-slate-100'
                 }`}
               >
                 <Icon className="w-4.5 h-4.5 shrink-0" />
@@ -83,22 +90,23 @@ export default function Layout({ children }) {
         </nav>
 
         {/* User + Logout */}
-        <div className="px-4 py-4 border-t border-slate-800 shrink-0">
+        <div className="px-4 py-4 shrink-0" style={{ borderTop: '1px solid hsl(224, 30%, 18%)' }}>
           {user && (
             <button
               onClick={() => navigate('/profile')}
-              className="flex items-center gap-3 mb-3 px-1 w-full text-left hover:bg-slate-800 rounded-lg py-1.5 transition-colors"
+              className="flex items-center gap-3 mb-3 px-1 w-full text-left rounded-lg py-1.5 transition-colors hover:bg-slate-800/40"
             >
               <Avatar name={user.name} />
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-slate-200 truncate leading-tight">{user.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{user.role}</p>
+                <p className="text-sm font-semibold truncate leading-tight" style={{ color: 'hsl(224, 40%, 95%)' }}>{user.name}</p>
+                <p className="text-xs capitalize" style={{ color: 'hsl(224, 20%, 55%)' }}>{user.role}</p>
               </div>
             </button>
           )}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-500 hover:bg-slate-800 hover:text-slate-200 transition-all duration-150 cursor-pointer"
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all duration-150 cursor-pointer hover:bg-slate-800/40"
+            style={{ color: 'hsl(224, 20%, 55%)' }}
           >
             <LogoutIcon className="w-4 h-4 shrink-0" />
             Sign out

@@ -69,13 +69,14 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden" style={{ backgroundColor: 'hsl(224, 30%, 14%)' }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="text-base font-bold text-slate-900">New Ticket</h2>
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+          <h2 className="text-base font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>New Ticket</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
+            className="transition-colors"
+            style={{ color: 'hsl(224, 20%, 55%)' }}
             aria-label="Close"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -88,16 +89,22 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
           {/* Project */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-600">Project *</label>
+            <label className="text-xs font-semibold" style={{ color: 'hsl(224, 20%, 55%)' }}>Project *</label>
             {loadingProjects ? (
-              <p className="text-xs text-slate-400">Loading projects…</p>
+              <p className="text-xs" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading projects…</p>
             ) : (
               <select
                 name="projectId"
                 value={form.projectId}
                 onChange={handleChange}
                 required
-                className="text-sm px-3 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"
+                className="text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 transition-colors"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                  focusRingColor: 'hsl(244, 100%, 69%)',
+                }}
               >
                 <option value="">Select a project</option>
                 {projects.map((p) => (
@@ -109,7 +116,7 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
 
           {/* Title */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-600">Title *</label>
+            <label className="text-xs font-semibold" style={{ color: 'hsl(224, 20%, 55%)' }}>Title *</label>
             <input
               type="text"
               name="title"
@@ -117,32 +124,52 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
               onChange={handleChange}
               required
               placeholder="Short description of the task"
-              className="text-sm px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"
+              className="text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 transition-colors"
+              style={{
+                backgroundColor: 'hsl(224, 25%, 16%)',
+                border: '1px solid hsl(224, 30%, 18%)',
+                color: 'hsl(224, 40%, 95%)',
+                placeholderColor: 'hsl(224, 20%, 55%)',
+                focusRingColor: 'hsl(244, 100%, 69%)',
+              }}
             />
           </div>
 
           {/* Description */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-slate-600">Description</label>
+            <label className="text-xs font-semibold" style={{ color: 'hsl(224, 20%, 55%)' }}>Description</label>
             <textarea
               name="description"
               value={form.description}
               onChange={handleChange}
               rows={3}
               placeholder="What needs to be done? Add context, acceptance criteria…"
-              className="text-sm px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400 resize-none"
+              className="text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 transition-colors resize-none"
+              style={{
+                backgroundColor: 'hsl(224, 25%, 16%)',
+                border: '1px solid hsl(224, 30%, 18%)',
+                color: 'hsl(224, 40%, 95%)',
+                placeholderColor: 'hsl(224, 20%, 55%)',
+                focusRingColor: 'hsl(244, 100%, 69%)',
+              }}
             />
           </div>
 
           {/* Category + Estimated hours */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-600">Category</label>
+              <label className="text-xs font-semibold" style={{ color: 'hsl(224, 20%, 55%)' }}>Category</label>
               <select
                 name="category"
                 value={form.category}
                 onChange={handleChange}
-                className="text-sm px-3 py-2 rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800"
+                className="text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 transition-colors"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                  focusRingColor: 'hsl(244, 100%, 69%)',
+                }}
               >
                 {CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>{c.label}</option>
@@ -151,7 +178,7 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-semibold text-slate-600">Est. hours</label>
+              <label className="text-xs font-semibold" style={{ color: 'hsl(224, 20%, 55%)' }}>Est. hours</label>
               <input
                 type="number"
                 name="estimatedHrs"
@@ -160,13 +187,20 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
                 min="0"
                 step="0.5"
                 placeholder="e.g. 2"
-                className="text-sm px-3 py-2 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-300 text-slate-800 placeholder:text-slate-400"
+                className="text-sm px-3 py-2 rounded-lg focus:outline-none focus:ring-2 transition-colors"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                  placeholderColor: 'hsl(224, 20%, 55%)',
+                  focusRingColor: 'hsl(244, 100%, 69%)',
+                }}
               />
             </div>
           </div>
 
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-lg">{error}</p>
+            <p className="text-xs px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 10%)', border: '1px solid hsl(0, 100%, 20%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>
           )}
 
           {/* Actions */}
@@ -174,14 +208,20 @@ export default function CreateTicketModal({ userId, onClose, onCreated }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 text-sm font-medium px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors"
+              className="flex-1 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+              style={{
+                backgroundColor: 'transparent',
+                border: '1px solid hsl(224, 30%, 18%)',
+                color: 'hsl(224, 20%, 55%)',
+              }}
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={submitting || loadingProjects}
-              className="flex-1 text-sm font-semibold px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="flex-1 text-sm font-semibold px-4 py-2 text-white rounded-lg transition-colors disabled:opacity-50"
+              style={{ backgroundColor: 'hsl(244, 100%, 69%)' }}
             >
               {submitting ? 'Creating…' : 'Create Ticket'}
             </button>

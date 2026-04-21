@@ -6,14 +6,14 @@ import Layout from '../components/Layout.jsx'
 function Field({ label, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">{label}</label>
+      <label className="block text-xs font-medium mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>{label}</label>
       {children}
     </div>
   )
 }
 
-const inputCls = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
-const btnPrimary = 'px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
+const inputCls = 'w-full px-3 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 transition-colors'
+const btnPrimary = 'px-4 py-2 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
 
 export default function Profile() {
   const { user, setUser } = useAuth()
@@ -78,26 +78,32 @@ export default function Profile() {
     <Layout>
       <div className="px-8 py-8 max-w-xl">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-gray-900">My Profile</h1>
-          <p className="text-sm text-gray-500 mt-0.5">View and update your account information.</p>
+          <h1 className="text-xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>My Profile</h1>
+          <p className="text-sm mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>View and update your account information.</p>
         </div>
 
         {/* Info Card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Account Info</h2>
+        <div className="rounded-xl p-6 mb-6" style={{ backgroundColor: 'hsl(224, 30%, 14%)', border: '1px solid hsl(224, 30%, 18%)' }}>
+          <h2 className="text-sm font-semibold mb-4" style={{ color: 'hsl(224, 30%, 85%)' }}>Account Info</h2>
 
-          <div className="mb-4 text-sm text-gray-500">
-            <span className="font-medium text-gray-700">Role:</span>{' '}
-            <span className="capitalize">{user?.role}</span>
+          <div className="mb-4 text-sm">
+            <span className="font-medium" style={{ color: 'hsl(224, 30%, 85%)' }}>Role:</span>{' '}
+            <span className="capitalize" style={{ color: 'hsl(224, 20%, 55%)' }}>{user?.role}</span>
           </div>
 
           <form onSubmit={handleInfoSubmit} className="space-y-4">
-            {infoError && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{infoError}</p>}
-            {infoSuccess && <p className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg">Profile updated successfully.</p>}
+            {infoError && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 10%)', color: 'hsl(0, 100%, 60%)' }}>{infoError}</p>}
+            {infoSuccess && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(120, 100%, 10%)', color: 'hsl(120, 100%, 50%)' }}>Profile updated successfully.</p>}
 
             <Field label="Full Name">
               <input
                 className={inputCls}
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                  focusRingColor: 'hsl(244, 100%, 69%)',
+                }}
                 value={infoForm.name}
                 onChange={(e) => setInfo('name', e.target.value)}
                 required
@@ -108,30 +114,40 @@ export default function Profile() {
               <input
                 className={inputCls}
                 type="email"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                }}
                 value={infoForm.email}
                 onChange={(e) => setInfo('email', e.target.value)}
                 required
               />
             </Field>
 
-            <button type="submit" disabled={infoSaving} className={btnPrimary}>
+            <button type="submit" disabled={infoSaving} className={btnPrimary} style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'white' }}>
               {infoSaving ? 'Saving…' : 'Save Changes'}
             </button>
           </form>
         </div>
 
         {/* Password Card */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
-          <h2 className="text-sm font-semibold text-gray-700 mb-4">Change Password</h2>
+        <div className="rounded-xl p-6" style={{ backgroundColor: 'hsl(224, 30%, 14%)', border: '1px solid hsl(224, 30%, 18%)' }}>
+          <h2 className="text-sm font-semibold mb-4" style={{ color: 'hsl(224, 30%, 85%)' }}>Change Password</h2>
 
           <form onSubmit={handlePwSubmit} className="space-y-4">
-            {pwError && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{pwError}</p>}
-            {pwSuccess && <p className="text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg">Password changed successfully.</p>}
+            {pwError && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 10%)', color: 'hsl(0, 100%, 60%)' }}>{pwError}</p>}
+            {pwSuccess && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(120, 100%, 10%)', color: 'hsl(120, 100%, 50%)' }}>Password changed successfully.</p>}
 
             <Field label="Current Password">
               <input
                 className={inputCls}
                 type="password"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                }}
                 value={pwForm.currentPassword}
                 onChange={(e) => setPw('currentPassword', e.target.value)}
                 required
@@ -142,6 +158,11 @@ export default function Profile() {
               <input
                 className={inputCls}
                 type="password"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                }}
                 value={pwForm.newPassword}
                 onChange={(e) => setPw('newPassword', e.target.value)}
                 required
@@ -154,6 +175,11 @@ export default function Profile() {
               <input
                 className={inputCls}
                 type="password"
+                style={{
+                  backgroundColor: 'hsl(224, 25%, 16%)',
+                  border: '1px solid hsl(224, 30%, 18%)',
+                  color: 'hsl(224, 40%, 95%)',
+                }}
                 value={pwForm.confirmPassword}
                 onChange={(e) => setPw('confirmPassword', e.target.value)}
                 required
@@ -161,7 +187,7 @@ export default function Profile() {
               />
             </Field>
 
-            <button type="submit" disabled={pwSaving} className={btnPrimary}>
+            <button type="submit" disabled={pwSaving} className={btnPrimary} style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'white' }}>
               {pwSaving ? 'Changing…' : 'Change Password'}
             </button>
           </form>

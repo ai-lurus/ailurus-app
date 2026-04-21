@@ -10,9 +10,9 @@ import {
 } from '../../api/battles.js'
 
 // ── Shared styles ──────────────────────────────────────────────────────────────
-const inputCls     = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
+const inputCls     = 'w-full px-3 py-2 text-sm border border-[hsl(224,30%,18%)] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
 const btnPrimary   = 'px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors'
+const btnSecondary = 'px-4 py-2 border border-[hsl(224,30%,18%)] text-[hsl(224,40%,80%)] text-sm font-medium rounded-lg hover:bg-[hsl(224,30%,15%)] transition-colors'
 const btnDanger    = 'text-xs font-medium text-red-500 hover:text-red-700 hover:bg-red-50 border border-red-100 px-2 py-1 rounded-lg transition-colors'
 const btnAction    = 'text-xs font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors'
 
@@ -26,7 +26,7 @@ const TABS = [
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
+      <label className="block text-xs font-medium text-[hsl(224,40%,70%)] mb-1">
         {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
@@ -40,7 +40,7 @@ export default function BattlesAdminPanel() {
   return (
     <div className="space-y-6">
       {/* Sub-tab bar */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border-[hsl(224,30%,18%)]">
         {TABS.map((t) => (
           <button
             key={t.key}
@@ -48,7 +48,7 @@ export default function BattlesAdminPanel() {
             className={`px-4 py-2 text-sm font-medium rounded-t-lg transition-colors ${
               tab === t.key
                 ? 'bg-indigo-50 text-indigo-700 border-b-2 border-indigo-500'
-                : 'text-gray-500 hover:text-gray-800'
+                : 'text-[hsl(224,20%,55%)] hover:text-[hsl(224,40%,95%)]'
             }`}
           >
             {t.label}
@@ -111,7 +111,7 @@ function EnemyPoolTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">Upload SVG or PNG images for battle enemies.</p>
+        <p className="text-sm text-[hsl(224,20%,55%)]">Upload SVG or PNG images for battle enemies.</p>
         <label className={`${btnPrimary} cursor-pointer`}>
           {uploading ? 'Uploading…' : '+ Upload Image'}
           <input
@@ -126,18 +126,18 @@ function EnemyPoolTab() {
       </div>
 
       {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
-      {loading && <p className="text-sm text-gray-400 text-center py-8">Loading…</p>}
+      {loading && <p className="text-sm text-[hsl(224,20%,45%)] text-center py-8">Loading…</p>}
 
       {!loading && enemies.length === 0 && (
-        <div className="border border-dashed border-gray-200 rounded-xl py-12 text-center">
-          <p className="text-sm text-gray-400">No enemies uploaded yet.</p>
+        <div className="border border-dashed border-[hsl(224,30%,18%)] rounded-xl py-12 text-center">
+          <p className="text-sm text-[hsl(224,20%,45%)]">No enemies uploaded yet.</p>
         </div>
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {enemies.map((enemy) => (
-          <div key={enemy.id} className="group relative bg-white border border-gray-200 rounded-xl overflow-hidden">
-            <div className="aspect-square flex items-center justify-center p-3 bg-gray-50">
+          <div key={enemy.id} className="group relative bg-[hsl(224,35%,10%)] border border-[hsl(224,30%,18%)] rounded-xl overflow-hidden">
+            <div className="aspect-square flex items-center justify-center p-3 bg-[hsl(224,30%,13%)]">
               <img
                 src={`${apiBase}/public/enemies/${enemy.filename}`}
                 alt={enemy.name}
@@ -145,7 +145,7 @@ function EnemyPoolTab() {
               />
             </div>
             <div className="px-2 py-1.5 flex items-center justify-between gap-1">
-              <p className="text-xs text-gray-600 truncate">{enemy.name}</p>
+              <p className="text-xs text-[hsl(224,40%,70%)] truncate">{enemy.name}</p>
               <button onClick={() => handleDelete(enemy.id)} className={btnDanger}>
                 ✕
               </button>
@@ -212,7 +212,7 @@ function TopicsTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">Create topics and upload battle question sets (JSON).</p>
+        <p className="text-sm text-[hsl(224,20%,55%)]">Create topics and upload battle question sets (JSON).</p>
         {!showNewForm && (
           <button onClick={() => setShowNewForm(true)} className={btnPrimary}>
             + New Topic
@@ -229,11 +229,11 @@ function TopicsTab() {
         />
       )}
 
-      {loading && <p className="text-sm text-gray-400 text-center py-8">Loading…</p>}
+      {loading && <p className="text-sm text-[hsl(224,20%,45%)] text-center py-8">Loading…</p>}
 
       {!loading && topics.length === 0 && !showNewForm && (
-        <div className="border border-dashed border-gray-200 rounded-xl py-12 text-center">
-          <p className="text-sm text-gray-400">No topics yet. Create one to get started.</p>
+        <div className="border border-dashed border-[hsl(224,30%,18%)] rounded-xl py-12 text-center">
+          <p className="text-sm text-[hsl(224,20%,45%)]">No topics yet. Create one to get started.</p>
         </div>
       )}
 
@@ -284,7 +284,7 @@ function TopicForm({ initial, onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+    <form onSubmit={handleSubmit} className="bg-[hsl(224,30%,13%)] border border-[hsl(224,30%,18%)] rounded-xl p-4 space-y-3">
       {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
       <div className="grid grid-cols-4 gap-3">
         <div className="col-span-3">
@@ -319,14 +319,14 @@ function TopicRow({ topic, isEditing, isExpanded, onEdit, onCancelEdit, onSaveEd
   }
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-3 px-4 py-3 bg-white">
+    <div className="border border-[hsl(224,30%,18%)] rounded-xl overflow-hidden">
+      <div className="flex items-center gap-3 px-4 py-3 bg-[hsl(224,35%,10%)]">
         <span className="text-xl shrink-0">{topic.icon || '📚'}</span>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-800">{topic.title}</p>
-          {topic.description && <p className="text-xs text-gray-400 truncate">{topic.description}</p>}
+          <p className="text-sm font-semibold text-[hsl(224,40%,95%)]">{topic.title}</p>
+          {topic.description && <p className="text-xs text-[hsl(224,20%,45%)] truncate">{topic.description}</p>}
         </div>
-        <span className="text-xs text-gray-400 shrink-0">{battleCount}/5 battles</span>
+        <span className="text-xs text-[hsl(224,20%,45%)] shrink-0">{battleCount}/5 battles</span>
         <div className="flex items-center gap-1.5 shrink-0">
           <button onClick={onToggle} className={btnAction}>
             {isExpanded ? 'Hide' : 'Battles'}
@@ -337,7 +337,7 @@ function TopicRow({ topic, isEditing, isExpanded, onEdit, onCancelEdit, onSaveEd
       </div>
 
       {isExpanded && (
-        <div className="border-t border-gray-100 bg-gray-50 px-4 py-4">
+        <div className="border-t border-[hsl(224,30%,15%)] bg-[hsl(224,30%,13%)] px-4 py-4">
           <BattlesUploadSection topic={topic} onUploaded={onBattlesUploaded} />
         </div>
       )}
@@ -376,7 +376,7 @@ function BattlesUploadSection({ topic, onUploaded }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-gray-600">Battle Questions (JSON)</p>
+        <p className="text-xs font-medium text-[hsl(224,40%,70%)]">Battle Questions (JSON)</p>
         <label className={`${btnAction} cursor-pointer`}>
           {uploading ? 'Uploading…' : 'Upload JSON'}
           <input ref={fileRef} type="file" accept=".json,application/json" className="hidden" onChange={handleFile} disabled={uploading} />
@@ -384,8 +384,8 @@ function BattlesUploadSection({ topic, onUploaded }) {
       </div>
       {error && <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
       {success && <p className="text-xs text-green-700 bg-green-50 px-3 py-2 rounded-lg">{success}</p>}
-      <p className="text-xs text-gray-400">
-        Format: array of up to 5 battles, each with <code className="bg-gray-100 px-1 rounded">title</code> and <code className="bg-gray-100 px-1 rounded">questions</code> (12 items with <code className="bg-gray-100 px-1 rounded">text, options, correctIndex, explanation</code>).
+      <p className="text-xs text-[hsl(224,20%,45%)]">
+        Format: array of up to 5 battles, each with <code className="bg-[hsl(224,30%,15%)] px-1 rounded">title</code> and <code className="bg-[hsl(224,30%,15%)] px-1 rounded">questions</code> (12 items with <code className="bg-[hsl(224,30%,15%)] px-1 rounded">text, options, correctIndex, explanation</code>).
       </p>
     </div>
   )
@@ -470,7 +470,7 @@ function PathsTab() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">Create battle learning paths and assign them to team members.</p>
+        <p className="text-sm text-[hsl(224,20%,55%)]">Create battle learning paths and assign them to team members.</p>
         {!showNewForm && (
           <button onClick={() => setShowNewForm(true)} className={btnPrimary}>+ New Path</button>
         )}
@@ -482,11 +482,11 @@ function PathsTab() {
         <PathForm allTopics={allTopics} onSave={handleCreate} onCancel={() => setShowNewForm(false)} />
       )}
 
-      {loading && <p className="text-sm text-gray-400 text-center py-8">Loading…</p>}
+      {loading && <p className="text-sm text-[hsl(224,20%,45%)] text-center py-8">Loading…</p>}
 
       {!loading && paths.length === 0 && !showNewForm && (
-        <div className="border border-dashed border-gray-200 rounded-xl py-12 text-center">
-          <p className="text-sm text-gray-400">No battle paths yet.</p>
+        <div className="border border-dashed border-[hsl(224,30%,18%)] rounded-xl py-12 text-center">
+          <p className="text-sm text-[hsl(224,20%,45%)]">No battle paths yet.</p>
         </div>
       )}
 
@@ -545,7 +545,7 @@ function PathForm({ allTopics = [], onSave, onCancel }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+    <form onSubmit={handleSubmit} className="bg-[hsl(224,30%,13%)] border border-[hsl(224,30%,18%)] rounded-xl p-4 space-y-3">
       {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
       <Field label="Path Title" required>
         <input className={inputCls} value={form.title} onChange={(e) => set('title', e.target.value)} required placeholder="e.g. Frontend Fundamentals" />
@@ -564,7 +564,7 @@ function PathForm({ allTopics = [], onSave, onCancel }) {
                 className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
                   selectedTopicIds.includes(t.id)
                     ? 'bg-indigo-600 text-white border-indigo-600'
-                    : 'bg-white text-gray-600 border-gray-200 hover:border-indigo-300'
+                    : 'bg-[hsl(224,35%,10%)] text-[hsl(224,40%,70%)] border-[hsl(224,30%,18%)] hover:border-indigo-300'
                 }`}
               >
                 {t.icon || '📚'} {t.title}
@@ -613,15 +613,15 @@ function ProgressTab() {
       .finally(() => setLoadingPaths(false))
   }, [selectedDev])
 
-  if (loadingDevs) return <p className="text-sm text-gray-400 py-8 text-center">Loading…</p>
+  if (loadingDevs) return <p className="text-sm text-[hsl(224,20%,45%)] py-8 text-center">Loading…</p>
   if (error)       return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
-        <label className="text-xs font-medium text-gray-600">Developer</label>
+        <label className="text-xs font-medium text-[hsl(224,40%,70%)]">Developer</label>
         <select
-          className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          className="px-3 py-1.5 text-sm border border-[hsl(224,30%,18%)] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300"
           value={selectedDev?.id ?? ''}
           onChange={(e) => {
             const dev = developers.find((d) => d.id === e.target.value)
@@ -633,10 +633,10 @@ function ProgressTab() {
       </div>
 
       {loadingPaths ? (
-        <p className="text-sm text-gray-400 py-4 text-center">Loading paths…</p>
+        <p className="text-sm text-[hsl(224,20%,45%)] py-4 text-center">Loading paths…</p>
       ) : paths.length === 0 ? (
-        <div className="border border-dashed border-gray-200 rounded-xl py-10 text-center">
-          <p className="text-sm text-gray-400">No battle paths assigned to this developer.</p>
+        <div className="border border-dashed border-[hsl(224,30%,18%)] rounded-xl py-10 text-center">
+          <p className="text-sm text-[hsl(224,20%,45%)]">No battle paths assigned to this developer.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -663,15 +663,15 @@ function BattleProgressCard({ path, isExpanded, onToggle }) {
   const progressPct = totalBattles === 0 ? 0 : Math.round((completedBattles / totalBattles) * 100)
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
-      <div className="bg-gray-50 px-4 py-3 flex items-center justify-between gap-3 border-b border-gray-200">
+    <div className="border border-[hsl(224,30%,18%)] rounded-xl overflow-hidden">
+      <div className="bg-[hsl(224,30%,13%)] px-4 py-3 flex items-center justify-between gap-3 border-b border-[hsl(224,30%,18%)]">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-800">{path.title}</p>
+          <p className="text-sm font-semibold text-[hsl(224,40%,95%)]">{path.title}</p>
           <div className="flex items-center gap-3 mt-1">
-            <div className="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden max-w-xs">
+            <div className="flex-1 h-1.5 bg-[hsl(224,30%,18%)] rounded-full overflow-hidden max-w-xs">
               <div className="h-1.5 bg-indigo-500 rounded-full transition-all" style={{ width: `${progressPct}%` }} />
             </div>
-            <span className="text-xs text-gray-400 shrink-0">
+            <span className="text-xs text-[hsl(224,20%,45%)] shrink-0">
               {progressPct}% · {completedBattles}/{totalBattles} batallas
             </span>
           </div>
@@ -682,9 +682,9 @@ function BattleProgressCard({ path, isExpanded, onToggle }) {
       </div>
 
       {isExpanded && (
-        <div className="divide-y divide-gray-50">
+        <div className="divide-y divide-[hsl(224,30%,13%)]">
           {path.topics.length === 0 ? (
-            <p className="text-xs text-gray-400 px-4 py-3">Sin temas en este path.</p>
+            <p className="text-xs text-[hsl(224,20%,45%)] px-4 py-3">Sin temas en este path.</p>
           ) : (
             path.topics.map((topic) => (
               <TopicProgressRow key={topic.id} topic={topic} />
@@ -704,32 +704,32 @@ function TopicProgressRow({ topic }) {
   return (
     <div>
       <div
-        className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-gray-50 transition-colors"
+        className="flex items-center gap-3 px-4 py-2.5 cursor-pointer hover:bg-[hsl(224,30%,15%)] transition-colors"
         onClick={() => setExpanded((v) => !v)}
       >
         <span className="text-base shrink-0">{topic.icon || '📚'}</span>
-        <p className="text-xs font-medium text-gray-800 flex-1 truncate">{topic.title}</p>
+        <p className="text-xs font-medium text-[hsl(224,40%,95%)] flex-1 truncate">{topic.title}</p>
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${
           completed === total && total > 0
             ? 'bg-green-100 text-green-700'
             : completed > 0
             ? 'bg-blue-100 text-blue-700'
-            : 'bg-gray-100 text-gray-500'
+            : 'bg-[hsl(224,30%,15%)] text-[hsl(224,20%,55%)]'
         }`}>
           {completed}/{total} completadas
         </span>
-        <span className="text-gray-300 text-xs shrink-0">{expanded ? '▲' : '▼'}</span>
+        <span className="text-[hsl(224,30%,65%)] text-xs shrink-0">{expanded ? '▲' : '▼'}</span>
       </div>
 
       {expanded && (
-        <div className="bg-gray-50 border-t border-gray-100 px-4 py-2 space-y-1">
+        <div className="bg-[hsl(224,30%,13%)] border-t border-[hsl(224,30%,15%)] px-4 py-2 space-y-1">
           {topic.battles.map((battle) => {
             const prog = battle.progress
             const isCompleted  = prog?.completed ?? false
             const isAttempted  = prog !== null && !isCompleted
             return (
               <div key={battle.id} className="flex items-center justify-between py-1 gap-2">
-                <span className="text-xs text-gray-700 flex-1 truncate">
+                <span className="text-xs text-[hsl(224,40%,80%)] flex-1 truncate">
                   {battle.order}. {battle.title}
                 </span>
                 {isCompleted ? (
@@ -741,7 +741,7 @@ function TopicProgressRow({ topic }) {
                     En progreso · {prog.score}/12
                   </span>
                 ) : (
-                  <span className="text-xs bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full shrink-0">
+                  <span className="text-xs bg-[hsl(224,30%,15%)] text-[hsl(224,20%,45%)] px-2 py-0.5 rounded-full shrink-0">
                     Sin iniciar
                   </span>
                 )}
@@ -787,13 +787,13 @@ function PathRow({ path, users, allTopics = [], isExpanded, onToggle, onDelete, 
   }
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
-      <div className="flex items-center gap-3 px-4 py-3 bg-white">
+    <div className="border border-[hsl(224,30%,18%)] rounded-xl overflow-hidden">
+      <div className="flex items-center gap-3 px-4 py-3 bg-[hsl(224,35%,10%)]">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-gray-800">{path.title}</p>
-          {path.description && <p className="text-xs text-gray-400 truncate">{path.description}</p>}
+          <p className="text-sm font-semibold text-[hsl(224,40%,95%)]">{path.title}</p>
+          {path.description && <p className="text-xs text-[hsl(224,20%,45%)] truncate">{path.description}</p>}
         </div>
-        <span className="text-xs text-gray-400 shrink-0">
+        <span className="text-xs text-[hsl(224,20%,45%)] shrink-0">
           {path._count?.topics ?? path.topics?.length ?? 0} topics · {assignedIds.size} assigned
         </span>
         <div className="flex items-center gap-1.5 shrink-0">
@@ -805,19 +805,19 @@ function PathRow({ path, users, allTopics = [], isExpanded, onToggle, onDelete, 
       </div>
 
       {isExpanded && (
-        <div className="border-t border-gray-100 bg-gray-50 px-4 py-4 space-y-4">
+        <div className="border-t border-[hsl(224,30%,15%)] bg-[hsl(224,30%,13%)] px-4 py-4 space-y-4">
           {/* Topics */}
           <div>
-            <p className="text-xs font-medium text-gray-600 mb-2">Topics</p>
+            <p className="text-xs font-medium text-[hsl(224,40%,70%)] mb-2">Topics</p>
             {(path.topics ?? []).length === 0 && (
-              <p className="text-xs text-gray-400 mb-2">No topics in this path yet.</p>
+              <p className="text-xs text-[hsl(224,20%,45%)] mb-2">No topics in this path yet.</p>
             )}
             <div className="flex flex-wrap gap-2 mb-2">
               {(path.topics ?? []).map((pt) => {
                 const t = pt.topic ?? allTopics.find((x) => x.id === pt.topicId)
                 if (!t) return null
                 return (
-                  <span key={t.id} className="flex items-center gap-1 px-2 py-1 bg-white border border-gray-200 rounded-lg text-xs text-gray-700">
+                  <span key={t.id} className="flex items-center gap-1 px-2 py-1 bg-[hsl(224,35%,10%)] border border-[hsl(224,30%,18%)] rounded-lg text-xs text-[hsl(224,40%,80%)]">
                     {t.icon || '📚'} {t.title}
                     <button onClick={() => onRemoveTopic(t.id)} className="text-red-400 hover:text-red-600 ml-1">✕</button>
                   </span>
@@ -849,16 +849,16 @@ function PathRow({ path, users, allTopics = [], isExpanded, onToggle, onDelete, 
 
           {/* Assigned users */}
           <div>
-            <p className="text-xs font-medium text-gray-600 mb-2">Assigned Users</p>
+            <p className="text-xs font-medium text-[hsl(224,40%,70%)] mb-2">Assigned Users</p>
             {assignedIds.size === 0 && (
-              <p className="text-xs text-gray-400">No users assigned yet.</p>
+              <p className="text-xs text-[hsl(224,20%,45%)]">No users assigned yet.</p>
             )}
             <div className="space-y-1">
               {(path.userPaths ?? []).map((assignment) => {
                 const user = users.find((u) => u.id === assignment.userId)
                 return (
-                  <div key={assignment.userId} className="flex items-center justify-between bg-white border border-gray-200 rounded-lg px-3 py-1.5">
-                    <span className="text-sm text-gray-700">{user?.name ?? assignment.userId}</span>
+                  <div key={assignment.userId} className="flex items-center justify-between bg-[hsl(224,35%,10%)] border border-[hsl(224,30%,18%)] rounded-lg px-3 py-1.5">
+                    <span className="text-sm text-[hsl(224,40%,80%)]">{user?.name ?? assignment.userId}</span>
                     <button onClick={() => onUnassign(assignment.userId)} className={btnDanger}>Remove</button>
                   </div>
                 )
@@ -869,7 +869,7 @@ function PathRow({ path, users, allTopics = [], isExpanded, onToggle, onDelete, 
           {/* Assign user */}
           {unassignedUsers.length > 0 && (
             <div>
-              <p className="text-xs font-medium text-gray-600 mb-2">Assign User</p>
+              <p className="text-xs font-medium text-[hsl(224,40%,70%)] mb-2">Assign User</p>
               <div className="flex gap-2">
                 <select
                   className={`${inputCls} flex-1`}

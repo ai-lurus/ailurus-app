@@ -6,8 +6,8 @@ export default function AdminReports() {
     <Layout>
       <div className="px-8 py-8">
         <div className="mb-6">
-          <h1 className="text-xl font-bold text-gray-900">Reports</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Daily check-ins, team activity, and project health reports.</p>
+          <h1 className="text-xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Reports</h1>
+          <p className="text-sm mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Daily check-ins, team activity, and project health reports.</p>
         </div>
         <ReportsTab />
       </div>

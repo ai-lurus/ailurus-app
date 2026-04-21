@@ -8,10 +8,10 @@ import Modal from '../Modal.jsx'
 const CATEGORY_OPTIONS = ['engineering', 'design', 'marketing', 'other']
 
 const CATEGORY_STYLES = {
-  engineering: 'bg-blue-100 text-blue-800',
-  design:      'bg-purple-100 text-purple-800',
-  marketing:   'bg-green-100 text-green-800',
-  other:       'bg-gray-100 text-gray-600',
+  engineering: { backgroundColor: 'hsl(217, 100%, 20%)', color: 'hsl(217, 100%, 50%)' },
+  design:      { backgroundColor: 'hsl(276, 100%, 20%)', color: 'hsl(276, 100%, 50%)' },
+  marketing:   { backgroundColor: 'hsl(120, 100%, 20%)', color: 'hsl(120, 100%, 50%)' },
+  other:       { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' },
 }
 
 // ── New Task Modal ────────────────────────────────────────────────────────────
@@ -72,31 +72,31 @@ function NewTaskModal({ projects, users, onClose, onCreated }) {
   return (
     <Modal title="Create Backlog Task" onClose={onClose} size="lg">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
+        {error && <p className="text-sm px-3 py-2 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>}
 
         <Field label="Title" required>
-          <input className={inputCls} value={form.title} onChange={(e) => set('title', e.target.value)} required placeholder="e.g. Build login page" />
+          <input style={inputStyle} value={form.title} onChange={(e) => set('title', e.target.value)} required placeholder="e.g. Build login page" />
         </Field>
 
         <Field label="Description">
-          <textarea className={`${inputCls} resize-none`} rows={3} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="Optional details…" />
+          <textarea style={{ ...inputStyle, resize: 'none' }} rows={3} value={form.description} onChange={(e) => set('description', e.target.value)} placeholder="Optional details…" />
         </Field>
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Project" required>
-            <select className={inputCls} value={form.projectId} onChange={(e) => set('projectId', e.target.value)}>
+            <select style={inputStyle} value={form.projectId} onChange={(e) => set('projectId', e.target.value)}>
               {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </Field>
           <Field label="Category" required>
-            <select className={inputCls} value={form.category} onChange={(e) => set('category', e.target.value)}>
+            <select style={inputStyle} value={form.category} onChange={(e) => set('category', e.target.value)}>
               {CATEGORY_OPTIONS.map((c) => <option key={c} value={c} className="capitalize">{c}</option>)}
             </select>
           </Field>
         </div>
 
         <Field label="Goal">
-          <select className={inputCls} value={form.goalId} onChange={(e) => set('goalId', e.target.value)}>
+          <select style={inputStyle} value={form.goalId} onChange={(e) => set('goalId', e.target.value)}>
             <option value="">— None —</option>
             {goals.map((g) => <option key={g.id} value={g.id}>{g.title}</option>)}
           </select>
@@ -104,23 +104,23 @@ function NewTaskModal({ projects, users, onClose, onCreated }) {
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Story Points">
-            <input className={inputCls} type="number" min="0" max="100" value={form.storyPoints} onChange={(e) => set('storyPoints', e.target.value)} placeholder="e.g. 3" />
+            <input style={inputStyle} type="number" min="0" max="100" value={form.storyPoints} onChange={(e) => set('storyPoints', e.target.value)} placeholder="e.g. 3" />
           </Field>
           <Field label="Estimated Hours">
-            <input className={inputCls} type="number" min="0" step="0.5" value={form.estimatedHrs} onChange={(e) => set('estimatedHrs', e.target.value)} placeholder="e.g. 8" />
+            <input style={inputStyle} type="number" min="0" step="0.5" value={form.estimatedHrs} onChange={(e) => set('estimatedHrs', e.target.value)} placeholder="e.g. 8" />
           </Field>
         </div>
 
         <Field label="Assign To">
-          <select className={inputCls} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
+          <select style={inputStyle} value={form.assignedTo} onChange={(e) => set('assignedTo', e.target.value)}>
             <option value="">— Unassigned —</option>
             {developers.map((u) => <option key={u.id} value={u.id}>{u.name} ({u.role})</option>)}
           </select>
         </Field>
 
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={onClose} className={btnSecondary}>Cancel</button>
-          <button type="submit" disabled={saving} className={btnPrimary}>
+          <button type="button" onClick={onClose} style={btnSecondaryStyle}>Cancel</button>
+          <button type="submit" disabled={saving} style={btnPrimaryStyle}>
             {saving ? 'Creating…' : 'Create Task'}
           </button>
         </div>
@@ -169,55 +169,55 @@ export default function BacklogTab() {
 
   const developers = users.filter((u) => ['developer', 'designer', 'pm'].includes(u.role))
 
-  if (loading) return <p className="text-sm text-gray-400 py-8 text-center">Loading backlog…</p>
-  if (error)   return <p className="text-sm text-red-600 bg-red-50 px-4 py-3 rounded-lg">{error}</p>
+  if (loading) return <p className="text-sm py-8 text-center" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading backlog…</p>
+  if (error)   return <p className="text-sm px-4 py-3 rounded-lg" style={{ backgroundColor: 'hsl(0, 100%, 15%)', color: 'hsl(0, 100%, 60%)' }}>{error}</p>
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-sm text-gray-500">{tasks.length} task{tasks.length !== 1 ? 's' : ''} in backlog</p>
-        <button onClick={() => setShowNew(true)} className={btnAction}>+ New Task</button>
+        <p className="text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>{tasks.length} task{tasks.length !== 1 ? 's' : ''} in backlog</p>
+        <button onClick={() => setShowNew(true)} style={btnActionStyle}>+ New Task</button>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-gray-200">
+      <div className="overflow-hidden rounded-xl" style={{ border: '1px solid hsl(224, 30%, 18%)' }}>
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className={th}>Task</th>
-              <th className={th}>Project</th>
-              <th className={th}>Category</th>
-              <th className={th}>Points</th>
-              <th className={th}>Assigned To</th>
-              <th className={th}></th>
+            <tr style={{ backgroundColor: 'hsl(224, 25%, 16%)', borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
+              <th style={thStyle}>Task</th>
+              <th style={thStyle}>Project</th>
+              <th style={thStyle}>Category</th>
+              <th style={thStyle}>Points</th>
+              <th style={thStyle}>Assigned To</th>
+              <th style={thStyle}></th>
             </tr>
           </thead>
           <tbody>
             {tasks.map((t, i) => {
               const assignee = users.find((u) => u.id === t.assignedTo)
               return (
-                <tr key={t.id} className={`border-b border-gray-100 ${i % 2 === 0 ? '' : 'bg-gray-50/50'}`}>
-                  <td className={td}>
-                    <p className="font-medium text-gray-900">{t.title}</p>
+                <tr key={t.id} style={{ borderBottom: '1px solid hsl(224, 30%, 18%)', backgroundColor: i % 2 === 0 ? 'transparent' : 'hsl(224, 30%, 12%)' }}>
+                  <td style={tdStyle}>
+                    <p className="font-medium">{t.title}</p>
                     {t.description && (
-                      <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{t.description}</p>
+                      <p className="text-xs mt-0.5 line-clamp-1" style={{ color: 'hsl(224, 20%, 55%)' }}>{t.description}</p>
                     )}
                   </td>
-                  <td className={td}>
-                    <span className="text-gray-600">{t.project?.name ?? '—'}</span>
+                  <td style={tdStyle}>
+                    <span>{t.project?.name ?? '—'}</span>
                   </td>
-                  <td className={td}>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize ${CATEGORY_STYLES[t.category] ?? 'bg-gray-100 text-gray-600'}`}>
+                  <td style={tdStyle}>
+                    <span className="text-xs font-medium px-2.5 py-1 rounded-full capitalize" style={{ ...CATEGORY_STYLES[t.category] ?? { backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' } }}>
                       {t.category}
                     </span>
                   </td>
-                  <td className={td}>
-                    <span className="text-gray-600">{t.storyPoints ?? '—'}</span>
+                  <td style={tdStyle}>
+                    <span>{t.storyPoints ?? '—'}</span>
                   </td>
-                  <td className={td}>
+                  <td style={tdStyle}>
                     {assigningTask === t.id ? (
                       <select
                         autoFocus
-                        className="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                        style={{ ...inputStyle, fontSize: '12px', padding: '4px 8px' }}
                         defaultValue={t.assignedTo ?? ''}
                         onBlur={() => setAssigning(null)}
                         onChange={(e) => handleAssign(t.id, e.target.value)}
@@ -228,16 +228,18 @@ export default function BacklogTab() {
                     ) : (
                       <button
                         onClick={() => setAssigning(t.id)}
-                        className="text-left text-xs hover:text-indigo-600 transition-colors"
+                        className="text-left text-xs transition-colors"
+                        style={{ color: assignee ? 'hsl(224, 40%, 95%)' : 'hsl(224, 20%, 55%)', fontStyle: assignee ? 'normal' : 'italic' }}
                       >
-                        {assignee ? assignee.name : <span className="text-gray-400 italic">Unassigned</span>}
+                        {assignee ? assignee.name : 'Unassigned'}
                       </button>
                     )}
                   </td>
-                  <td className={`${td} text-right`}>
+                  <td style={{ ...tdStyle, textAlign: 'right' }}>
                     <button
                       onClick={() => setAssigning(t.id)}
-                      className="text-xs font-medium text-indigo-600 hover:text-indigo-800 px-3 py-1 rounded-lg hover:bg-indigo-50 transition-colors"
+                      className="text-xs font-medium px-3 py-1 rounded-lg transition-colors"
+                      style={{ color: 'hsl(224, 30%, 14%)', backgroundColor: 'hsl(244, 100%, 69%)' }}
                     >
                       Assign
                     </button>
@@ -246,7 +248,7 @@ export default function BacklogTab() {
               )
             })}
             {tasks.length === 0 && (
-              <tr><td colSpan={6} className="text-center text-gray-400 py-10">No backlog tasks found.</td></tr>
+              <tr><td colSpan={6} className="text-center py-10" style={{ color: 'hsl(224, 20%, 55%)' }}>No backlog tasks found.</td></tr>
             )}
           </tbody>
         </table>
@@ -264,19 +266,19 @@ export default function BacklogTab() {
   )
 }
 
-// ── Shared style tokens ────────────────────────────────────────────────────────
-const inputCls    = 'w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
-const btnPrimary  = 'flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors'
-const btnAction   = 'text-xs font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors'
-const th = 'text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide'
-const td = 'px-4 py-3 text-gray-700'
+
+const inputStyle = { backgroundColor: 'hsl(224, 30%, 18%)', border: '1px solid hsl(224, 30%, 20%)', color: 'hsl(224, 40%, 95%)', borderRadius: '8px', padding: '8px 12px', fontSize: '14px', width: '100%' }
+const btnPrimaryStyle = { flex: 1, padding: '8px 16px', backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)', fontSize: '14px', fontWeight: '600', borderRadius: '8px', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s' }
+const btnSecondaryStyle = { padding: '8px 16px', border: '1px solid hsl(224, 30%, 18%)', color: 'hsl(224, 40%, 95%)', fontSize: '14px', fontWeight: '500', borderRadius: '8px', backgroundColor: 'transparent', cursor: 'pointer', transition: 'background-color 0.2s' }
+const btnActionStyle = { padding: '6px 12px', fontSize: '12px', fontWeight: '600', backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)', borderRadius: '6px', border: 'none', cursor: 'pointer', transition: 'background-color 0.2s' }
+const thStyle = { textAlign: 'left', padding: '12px 16px', fontSize: '12px', fontWeight: '600', color: 'hsl(224, 20%, 55%)', textTransform: 'uppercase', letterSpacing: '0.05em' }
+const tdStyle = { padding: '12px 16px', color: 'hsl(224, 40%, 95%)', fontSize: '14px' }
 
 function Field({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
-        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      <label className="block text-xs font-medium mb-1" style={{ color: 'hsl(224, 20%, 55%)' }}>
+        {label}{required && <span style={{ color: 'hsl(0, 100%, 60%)' }} className="ml-0.5">*</span>}
       </label>
       {children}
     </div>

@@ -35,11 +35,11 @@ function RatingBar({ label, value }) {
   const color = value >= 4 ? 'bg-emerald-500' : value >= 3 ? 'bg-sky-500' : value >= 2 ? 'bg-amber-500' : 'bg-rose-500'
   return (
     <div className="flex items-center gap-2">
-      <span className="text-xs text-gray-500 w-28 shrink-0">{label}</span>
-      <div className="flex-1 bg-gray-100 rounded-full h-2">
+      <span className="text-xs text-[hsl(224,20%,55%)] w-28 shrink-0">{label}</span>
+      <div className="flex-1 bg-[hsl(224,30%,15%)] rounded-full h-2">
         <div className={`h-2 rounded-full transition-all ${color}`} style={{ width: `${pct}%` }} />
       </div>
-      <span className="text-xs font-semibold text-gray-700 w-6 text-right">{value ?? '—'}</span>
+      <span className="text-xs font-semibold text-[hsl(224,40%,80%)] w-6 text-right">{value ?? '—'}</span>
     </div>
   )
 }
@@ -96,11 +96,11 @@ function ActivityTab({ userId }) {
 
       {/* Mood grid */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Last 30 days</p>
+        <p className="text-xs font-semibold text-[hsl(224,20%,55%)] uppercase tracking-wide mb-2">Last 30 days</p>
         <div className="flex flex-wrap gap-1.5">
           {days.map(({ dateStr, status }) => {
             const mood = status?.eodMood ?? status?.mood
-            const color = mood ? MOOD_COLORS[mood] : 'bg-gray-200'
+            const color = mood ? MOOD_COLORS[mood] : 'bg-[hsl(224,30%,18%)]'
             return (
               <div key={dateStr} className="relative group">
                 <div className={`w-5 h-5 rounded-full cursor-pointer ${color}`} />
@@ -116,13 +116,13 @@ function ActivityTab({ userId }) {
         {/* Legend */}
         <div className="flex gap-3 mt-2 flex-wrap">
           {Object.entries(MOOD_COLORS).map(([mood, cls]) => (
-            <span key={mood} className="inline-flex items-center gap-1 text-xs text-gray-500">
+            <span key={mood} className="inline-flex items-center gap-1 text-xs text-[hsl(224,20%,55%)]">
               <span className={`w-2.5 h-2.5 rounded-full ${cls}`} />
               {MOOD_LABELS[mood]}
             </span>
           ))}
-          <span className="inline-flex items-center gap-1 text-xs text-gray-500">
-            <span className="w-2.5 h-2.5 rounded-full bg-gray-200" />
+          <span className="inline-flex items-center gap-1 text-xs text-[hsl(224,20%,55%)]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[hsl(224,30%,18%)]" />
             No data
           </span>
         </div>
@@ -130,27 +130,27 @@ function ActivityTab({ userId }) {
 
       {/* Recent check-ins list */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Recent check-ins</p>
+        <p className="text-xs font-semibold text-[hsl(224,20%,55%)] uppercase tracking-wide mb-2">Recent check-ins</p>
         <div className="space-y-1">
           {statuses.slice(0, 10).map((s) => {
             const isOpen = expanded === s.id
             const mood   = s.mood
-            const dot    = mood ? MOOD_COLORS[mood] : 'bg-gray-200'
+            const dot    = mood ? MOOD_COLORS[mood] : 'bg-[hsl(224,30%,18%)]'
             return (
-              <div key={s.id} className="border border-gray-100 rounded-lg overflow-hidden">
+              <div key={s.id} className="border border-[hsl(224,30%,15%)] rounded-lg overflow-hidden">
                 <button
                   onClick={() => setExpanded(isOpen ? null : s.id)}
-                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-50 text-left"
+                  className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[hsl(224,30%,15%)] text-left"
                 >
                   <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${dot}`} />
-                  <span className="text-xs text-gray-700 flex-1">{s.date?.slice(0, 10)}</span>
+                  <span className="text-xs text-[hsl(224,40%,80%)] flex-1">{s.date?.slice(0, 10)}</span>
                   {s.eodSubmittedAt && (
                     <span className="text-xs text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">EOD ✓</span>
                   )}
-                  <span className="text-gray-400 text-xs">{isOpen ? '▲' : '▼'}</span>
+                  <span className="text-[hsl(224,20%,45%)] text-xs">{isOpen ? '▲' : '▼'}</span>
                 </button>
                 {isOpen && (
-                  <div className="px-3 pb-3 space-y-1.5 text-xs text-gray-600 bg-gray-50/50">
+                  <div className="px-3 pb-3 space-y-1.5 text-xs text-[hsl(224,40%,70%)] bg-[hsl(224,30%,13%)]">
                     {s.availableHrs && <p><span className="font-medium">Hours:</span> {s.availableHrs}h</p>}
                     {s.notes && <p><span className="font-medium">Notes:</span> {s.notes}</p>}
                     {s.blockers && <p><span className="font-medium text-rose-600">Blockers:</span> {s.blockers}</p>}
@@ -161,7 +161,7 @@ function ActivityTab({ userId }) {
               </div>
             )
           })}
-          {statuses.length === 0 && <p className="text-xs text-gray-400">No check-ins in the last 30 days.</p>}
+          {statuses.length === 0 && <p className="text-xs text-[hsl(224,20%,45%)]">No check-ins in the last 30 days.</p>}
         </div>
       </div>
     </div>
@@ -196,16 +196,16 @@ function TicketsTab({ userId }) {
     <div className="space-y-5">
       {/* Velocity chart */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Story Points / Week (last 8 weeks)</p>
+        <p className="text-xs font-semibold text-[hsl(224,20%,55%)] uppercase tracking-wide mb-3">Story Points / Week (last 8 weeks)</p>
         {weeks.length === 0 ? (
-          <p className="text-xs text-gray-400">No completed tickets in this period.</p>
+          <p className="text-xs text-[hsl(224,20%,45%)]">No completed tickets in this period.</p>
         ) : (
           <div className="flex items-end gap-2 h-24">
             {weeks.slice(0, 8).reverse().map((w) => {
               const heightPct = Math.round((w.totalPoints / maxPts) * 100)
               return (
                 <div key={w.week} className="flex flex-col items-center gap-1 flex-1 min-w-0">
-                  <span className="text-xs font-semibold text-gray-700">{w.totalPoints}</span>
+                  <span className="text-xs font-semibold text-[hsl(224,40%,80%)]">{w.totalPoints}</span>
                   <div className="w-full bg-indigo-100 rounded-t-sm relative group" style={{ height: `${Math.max(heightPct, 4)}%` }}>
                     <div className="w-full h-full bg-indigo-500 rounded-t-sm" />
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
@@ -214,7 +214,7 @@ function TicketsTab({ userId }) {
                       </div>
                     </div>
                   </div>
-                  <span className="text-xs text-gray-400 truncate w-full text-center">{w.week.slice(5)}</span>
+                  <span className="text-xs text-[hsl(224,20%,45%)] truncate w-full text-center">{w.week.slice(5)}</span>
                 </div>
               )
             })}
@@ -224,21 +224,21 @@ function TicketsTab({ userId }) {
 
       {/* Tasks list */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Completed & In Review</p>
+        <p className="text-xs font-semibold text-[hsl(224,20%,55%)] uppercase tracking-wide mb-2">Completed & In Review</p>
         <div className="space-y-1">
           {tasks.map((t) => (
-            <div key={t.id} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-100 text-xs">
+            <div key={t.id} className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[hsl(224,30%,15%)] text-xs">
               <span className={`px-1.5 py-0.5 rounded-full font-medium ${t.status === 'done' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'}`}>
                 {t.status === 'done' ? 'done' : 'in review'}
               </span>
-              <span className="flex-1 text-gray-700 truncate">{t.title}</span>
-              <span className="text-gray-400 shrink-0">{t.project?.name}</span>
+              <span className="flex-1 text-[hsl(224,40%,80%)] truncate">{t.title}</span>
+              <span className="text-[hsl(224,20%,45%)] shrink-0">{t.project?.name}</span>
               {t.storyPoints != null && (
                 <span className="bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded-full font-semibold shrink-0">{t.storyPoints}pts</span>
               )}
             </div>
           ))}
-          {tasks.length === 0 && <p className="text-xs text-gray-400">No tickets in this period.</p>}
+          {tasks.length === 0 && <p className="text-xs text-[hsl(224,20%,45%)]">No tickets in this period.</p>}
         </div>
       </div>
     </div>
@@ -345,7 +345,7 @@ function OneOnOnesTab({ userId }) {
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="border border-indigo-200 rounded-xl p-4 space-y-3 bg-indigo-50/30">
+        <form onSubmit={handleSubmit} className="border border-indigo-200 rounded-xl p-4 space-y-3 bg-indigo-950/30">
           <p className="text-xs font-semibold text-indigo-700">{editingId ? 'Edit Session' : 'New 1-on-1 Session'}</p>
           {formError && <p className="text-xs text-red-600 bg-red-50 px-2 py-1.5 rounded-lg">{formError}</p>}
           <FormField label="Session Date" required>
@@ -374,18 +374,18 @@ function OneOnOnesTab({ userId }) {
         {notes.map((note) => {
           const isOpen = expanded === note.id
           return (
-            <div key={note.id} className="border border-gray-100 rounded-xl overflow-hidden">
+            <div key={note.id} className="border border-[hsl(224,30%,15%)] rounded-xl overflow-hidden">
               <button
                 onClick={() => setExpanded(isOpen ? null : note.id)}
-                className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-gray-50 text-left"
+                className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-[hsl(224,30%,15%)] text-left"
               >
-                <span className="text-xs font-semibold text-gray-700 flex-1">{note.sessionDate?.slice(0, 10)}</span>
-                <span className="text-xs text-gray-400">by {note.author?.name}</span>
-                <span className="text-gray-400 text-xs ml-2">{isOpen ? '▲' : '▼'}</span>
+                <span className="text-xs font-semibold text-[hsl(224,40%,80%)] flex-1">{note.sessionDate?.slice(0, 10)}</span>
+                <span className="text-xs text-[hsl(224,20%,45%)]">by {note.author?.name}</span>
+                <span className="text-[hsl(224,20%,45%)] text-xs ml-2">{isOpen ? '▲' : '▼'}</span>
               </button>
               {isOpen && (
-                <div className="px-4 pb-3 space-y-2 bg-gray-50/50 text-xs text-gray-600">
-                  <p><span className="font-medium text-gray-700">Notes:</span> {note.notes}</p>
+                <div className="px-4 pb-3 space-y-2 bg-[hsl(224,30%,13%)] text-xs text-[hsl(224,40%,70%)]">
+                  <p><span className="font-medium text-[hsl(224,40%,80%)]">Notes:</span> {note.notes}</p>
                   {note.strengths    && <p><span className="font-medium text-emerald-700">Strengths:</span> {note.strengths}</p>}
                   {note.improvements && <p><span className="font-medium text-amber-700">Improvements:</span> {note.improvements}</p>}
                   {note.agreements   && <p><span className="font-medium text-indigo-700">Agreements:</span> {note.agreements}</p>}
@@ -398,7 +398,7 @@ function OneOnOnesTab({ userId }) {
             </div>
           )
         })}
-        {notes.length === 0 && !showForm && <p className="text-xs text-gray-400">No 1-on-1 sessions recorded yet.</p>}
+        {notes.length === 0 && !showForm && <p className="text-xs text-[hsl(224,20%,45%)]">No 1-on-1 sessions recorded yet.</p>}
       </div>
     </div>
   )
@@ -508,7 +508,7 @@ function EvaluationsTab({ userId }) {
       )}
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="border border-indigo-200 rounded-xl p-4 space-y-3 bg-indigo-50/30">
+        <form onSubmit={handleSubmit} className="border border-indigo-200 rounded-xl p-4 space-y-3 bg-indigo-950/30">
           <p className="text-xs font-semibold text-indigo-700">{editingId ? 'Edit Evaluation' : 'New Evaluation'}</p>
           {formError && <p className="text-xs text-red-600 bg-red-50 px-2 py-1.5 rounded-lg">{formError}</p>}
           <FormField label="Period Label" required>
@@ -561,21 +561,21 @@ function EvaluationsTab({ userId }) {
           const overall = review.overallRating
           const overallColor = overall >= 4 ? 'text-emerald-600' : overall >= 3 ? 'text-sky-600' : overall >= 2 ? 'text-amber-600' : 'text-rose-600'
           return (
-            <div key={review.id} className="border border-gray-100 rounded-xl overflow-hidden">
+            <div key={review.id} className="border border-[hsl(224,30%,15%)] rounded-xl overflow-hidden">
               <button
                 onClick={() => setExpanded(isOpen ? null : review.id)}
-                className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-gray-50 text-left"
+                className="w-full flex items-center gap-2 px-4 py-2.5 hover:bg-[hsl(224,30%,15%)] text-left"
               >
-                <span className="text-xs font-semibold text-gray-700 flex-1">{review.periodLabel}</span>
+                <span className="text-xs font-semibold text-[hsl(224,40%,80%)] flex-1">{review.periodLabel}</span>
                 {overall != null && (
                   <span className={`text-xs font-bold ${overallColor}`}>★ {overall}/5</span>
                 )}
-                <span className="text-xs text-gray-400">{review.periodEnd?.slice(0, 10)}</span>
-                <span className="text-gray-400 text-xs ml-2">{isOpen ? '▲' : '▼'}</span>
+                <span className="text-xs text-[hsl(224,20%,45%)]">{review.periodEnd?.slice(0, 10)}</span>
+                <span className="text-[hsl(224,20%,45%)] text-xs ml-2">{isOpen ? '▲' : '▼'}</span>
               </button>
               {isOpen && (
-                <div className="px-4 pb-4 space-y-3 bg-gray-50/50">
-                  <p className="text-xs text-gray-400">{review.periodStart?.slice(0, 10)} → {review.periodEnd?.slice(0, 10)} · by {review.author?.name}</p>
+                <div className="px-4 pb-4 space-y-3 bg-[hsl(224,30%,13%)]">
+                  <p className="text-xs text-[hsl(224,20%,45%)]">{review.periodStart?.slice(0, 10)} → {review.periodEnd?.slice(0, 10)} · by {review.author?.name}</p>
                   <div className="space-y-1.5">
                     <RatingBar label="Technical"     value={review.ratingTechnical} />
                     <RatingBar label="Communication" value={review.ratingComms} />
@@ -586,7 +586,7 @@ function EvaluationsTab({ userId }) {
                     )}
                   </div>
                   {review.summary && (
-                    <p className="text-xs text-gray-600"><span className="font-medium">Summary:</span> {review.summary}</p>
+                    <p className="text-xs text-[hsl(224,40%,70%)]"><span className="font-medium">Summary:</span> {review.summary}</p>
                   )}
                   <button onClick={() => openEdit(review)} className="text-indigo-600 hover:underline text-xs">Edit</button>
                 </div>
@@ -594,7 +594,7 @@ function EvaluationsTab({ userId }) {
             </div>
           )
         })}
-        {reviews.length === 0 && !showForm && <p className="text-xs text-gray-400">No evaluations recorded yet.</p>}
+        {reviews.length === 0 && !showForm && <p className="text-xs text-[hsl(224,20%,45%)]">No evaluations recorded yet.</p>}
       </div>
     </div>
   )
@@ -629,19 +629,19 @@ export default function DeveloperProfilePanel({ user, onClose }) {
       />
 
       {/* Panel */}
-      <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-white shadow-2xl z-50 flex flex-col">
+      <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-[hsl(224,35%,10%)] shadow-2xl z-50 flex flex-col">
         {/* Header */}
-        <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-[hsl(224,30%,15%)]">
           <div className="w-9 h-9 rounded-full bg-indigo-100 flex items-center justify-center shrink-0">
             <span className="text-sm font-bold text-indigo-700">{user.name?.[0]?.toUpperCase()}</span>
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-            <p className="text-xs text-gray-400 capitalize">{user.role} · {user.email}</p>
+            <p className="text-sm font-semibold text-[hsl(224,40%,95%)] truncate">{user.name}</p>
+            <p className="text-xs text-[hsl(224,20%,45%)] capitalize">{user.role} · {user.email}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-700 hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
+            className="text-[hsl(224,20%,45%)] hover:text-[hsl(224,40%,80%)] hover:bg-[hsl(224,30%,15%)] p-1.5 rounded-lg transition-colors"
             aria-label="Close"
           >
             ✕
@@ -649,7 +649,7 @@ export default function DeveloperProfilePanel({ user, onClose }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-100 px-5 shrink-0">
+        <div className="flex border-b border-[hsl(224,30%,15%)] px-5 shrink-0">
           {TABS.map((t) => (
             <button
               key={t.id}
@@ -657,7 +657,7 @@ export default function DeveloperProfilePanel({ user, onClose }) {
               className={`px-3 py-3 text-xs font-semibold border-b-2 transition-colors ${
                 activeTab === t.id
                   ? 'border-indigo-600 text-indigo-700'
-                  : 'border-transparent text-gray-500 hover:text-gray-700'
+                  : 'border-transparent text-[hsl(224,20%,55%)] hover:text-[hsl(224,40%,80%)]'
               }`}
             >
               {t.label}
@@ -680,7 +680,7 @@ export default function DeveloperProfilePanel({ user, onClose }) {
 // ── Shared helpers ────────────────────────────────────────────────────────────
 
 function Spinner() {
-  return <p className="text-xs text-gray-400 py-6 text-center">Loading…</p>
+  return <p className="text-xs text-[hsl(224,20%,45%)] py-6 text-center">Loading…</p>
 }
 
 function ErrorMsg({ msg }) {
@@ -689,9 +689,9 @@ function ErrorMsg({ msg }) {
 
 function StatCard({ label, value }) {
   return (
-    <div className="bg-gray-50 rounded-xl px-3 py-2.5 text-center">
-      <p className="text-sm font-bold text-gray-800">{value}</p>
-      <p className="text-xs text-gray-400 mt-0.5">{label}</p>
+    <div className="bg-[hsl(224,30%,13%)] rounded-xl px-3 py-2.5 text-center">
+      <p className="text-sm font-bold text-[hsl(224,40%,95%)]">{value}</p>
+      <p className="text-xs text-[hsl(224,20%,45%)] mt-0.5">{label}</p>
     </div>
   )
 }
@@ -699,7 +699,7 @@ function StatCard({ label, value }) {
 function FormField({ label, required, children }) {
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-600 mb-1">
+      <label className="block text-xs font-medium text-[hsl(224,40%,70%)] mb-1">
         {label}{required && <span className="text-red-500 ml-0.5">*</span>}
       </label>
       {children}
@@ -707,7 +707,7 @@ function FormField({ label, required, children }) {
   )
 }
 
-const inputCls    = 'w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
+const inputCls    = 'w-full px-3 py-2 text-xs border border-[hsl(224,30%,18%)] rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300'
 const btnPrimary  = 'flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-50'
-const btnSecondary = 'px-4 py-2 border border-gray-200 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors'
+const btnSecondary = 'px-4 py-2 border border-[hsl(224,30%,18%)] text-[hsl(224,40%,80%)] text-xs font-medium rounded-lg hover:bg-[hsl(224,30%,15%)] transition-colors'
 const btnAction   = 'text-xs font-medium text-indigo-600 border border-indigo-200 hover:bg-indigo-50 px-3 py-1.5 rounded-lg transition-colors'
