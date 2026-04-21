@@ -10,15 +10,19 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:4000'
  * @param {(text: string) => void} onChunk  called for each streamed text chunk
  * @returns {Promise<void>}
  */
+const MAX_CONTEXT_MESSAGES = 16 // ~8 exchanges
+
 export async function streamMorningCheckin({ messages }, onChunk) {
   const d = new Date()
   const localDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+  const trimmed = messages.slice(-MAX_CONTEXT_MESSAGES)
 
   const res = await fetch(`${API_BASE}/api/agents/morning-checkin`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, date: localDate }),
+    body: JSON.stringify({ messages: trimmed, date: localDate }),
   })
 
   if (!res.ok) {

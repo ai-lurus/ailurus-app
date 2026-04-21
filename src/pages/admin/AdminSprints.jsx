@@ -418,8 +418,6 @@ export default function AdminSprints() {
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Sprints</h1>
-            <p className="text-sm mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Organiza el trabajo por sprints y define los objetivos de cada uno.</p>
           </div>
           {selectedProject && (
             <button

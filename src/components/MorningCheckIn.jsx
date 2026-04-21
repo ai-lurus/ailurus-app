@@ -40,7 +40,7 @@ function CheckInForm({ onSubmit, submitting }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       {/* Mood */}
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wide">
+        <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: 'hsl(224, 20%, 55%)' }}>
           How are you feeling?
         </label>
         <div className="grid grid-cols-4 gap-2">
@@ -148,23 +148,23 @@ function CheckInSummary({ status }) {
     <div className="space-y-2.5">
       <div className="flex items-center gap-2">
         <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${mood?.dot ?? 'bg-slate-400'}`} />
-        <p className="font-medium text-slate-800 text-sm">{MOOD_SUMMARY[status.mood]}</p>
+        <p className="font-medium text-sm" style={{ color: 'hsl(224, 40%, 90%)' }}>{MOOD_SUMMARY[status.mood]}</p>
       </div>
       {status.availableHrs && (
-        <div className="flex items-center gap-2 text-sm text-slate-500">
-          <ClockIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <div className="flex items-center gap-2 text-sm" style={{ color: 'hsl(224, 20%, 60%)' }}>
+          <ClockIcon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(224, 20%, 50%)' }} />
           {status.availableHrs}h available today
         </div>
       )}
       {status.appointments && (
-        <div className="flex items-center gap-2 text-sm text-slate-500">
-          <CalendarIcon className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+        <div className="flex items-center gap-2 text-sm" style={{ color: 'hsl(224, 20%, 60%)' }}>
+          <CalendarIcon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(224, 20%, 50%)' }} />
           {status.appointments}
         </div>
       )}
       {status.blockers && (
-        <div className="flex items-center gap-2 text-sm text-amber-600">
-          <WarningIcon className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+        <div className="flex items-center gap-2 text-sm" style={{ color: 'hsl(43, 100%, 60%)' }}>
+          <WarningIcon className="w-3.5 h-3.5 shrink-0" style={{ color: 'hsl(43, 100%, 55%)' }} />
           Blocker: {status.blockers}
         </div>
       )}
@@ -206,19 +206,19 @@ export default function MorningCheckIn({ onStatusReady }) {
   const isSubmitted = status !== null && status !== undefined
 
   return (
-    <section className="bg-amber-50 border border-amber-200 rounded-2xl p-6">
+    <section className="rounded-2xl p-6 border" style={{ backgroundColor: 'hsl(224, 30%, 14%)', borderColor: 'hsl(224, 30%, 18%)' }}>
       <div className="flex items-center gap-2 mb-5">
-        <SunIcon className="w-5 h-5 text-amber-500 shrink-0" />
-        <h2 className="text-base font-bold text-[hsl(224,40%,95%)]">Morning Check-in</h2>
+        <SunIcon className="w-5 h-5 shrink-0" style={{ color: 'hsl(43, 100%, 55%)' }} />
+        <h2 className="text-base font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Morning Check-in</h2>
         {isSubmitted && (
-          <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+          <span className="ml-auto flex items-center gap-1.5 text-xs font-semibold px-2.5 py-0.5 rounded-full" style={{ backgroundColor: 'hsl(145, 70%, 10%)', color: 'hsl(145, 70%, 55%)' }}>
             <CheckCircleIcon className="w-3 h-3" />
             Done
           </span>
         )}
       </div>
 
-      {isLoading && <p className="text-sm text-slate-400">Loading…</p>}
+      {isLoading && <p className="text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading…</p>}
 
       {!isLoading && error && (
         <p className="text-sm text-red-500">{error}</p>

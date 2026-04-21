@@ -54,7 +54,7 @@ export async function getTaskComments(taskId) {
   return data.comments
 }
 
-export async function createTaskComment(taskId, body) {
-  const { data } = await client.post(`/api/tasks/${taskId}/comments`, { body })
+export async function createTaskComment(taskId, body, mentionedUserIds = []) {
+  const { data } = await client.post(`/api/tasks/${taskId}/comments`, { body, mentionedUserIds })
   return data.comment
 }

@@ -14,11 +14,6 @@ export default function AdminLearning() {
   return (
     <Layout>
       <div className="px-8 py-8">
-        <div className="mb-6">
-          <h1 className="text-xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Learning</h1>
-          <p className="text-sm mt-0.5" style={{ color: 'hsl(224, 20%, 55%)' }}>Manage learning paths and resources for the team.</p>
-        </div>
-
         {/* Top-level tab bar */}
         <div className="flex gap-1 mb-6" style={{ borderBottom: '1px solid hsl(224, 30%, 18%)' }}>
           {TABS.map((t) => (

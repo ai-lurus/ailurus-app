@@ -253,8 +253,6 @@ export default function Learning() {
             <ArrowLeftIcon className="w-3.5 h-3.5" />
             Back to home
           </button>
-          <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Learning & Growth</h1>
-          <p className="mt-1 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Your career path and study plan.</p>
         </div>
 
         {/* Battles banner */}

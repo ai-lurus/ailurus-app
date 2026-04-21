@@ -5,6 +5,11 @@ export async function getUsers() {
   return data.users
 }
 
+export async function getMentionableUsers() {
+  const { data } = await client.get('/api/users/mentionable')
+  return data.users
+}
+
 export async function createUser(payload) {
   const { data } = await client.post('/api/users', payload)
   return data.user

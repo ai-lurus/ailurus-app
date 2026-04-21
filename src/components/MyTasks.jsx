@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getMyTasks, updateTask } from '../api/tasks.js'
 import { TasksIcon } from './Icons.jsx'
 import CreateTicketModal from './CreateTicketModal.jsx'
+import { suggestBranchAndPr } from '../utils/taskSuggestions.js'
 
 const CATEGORY_STYLES = {
   engineering: 'bg-blue-500/20 text-blue-400 border border-blue-500/30',
@@ -26,10 +27,38 @@ const STATUS_PILL = {
   done:        'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30',
 }
 
+function CopyChip({ label, text }) {
+  const [copied, setCopied] = useState(false)
+
+  function handleCopy() {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    })
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      title={text}
+      className="flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-md transition-colors max-w-[180px]"
+      style={
+        copied
+          ? { backgroundColor: 'hsl(145, 70%, 10%)', color: 'hsl(145, 70%, 55%)', border: '1px solid hsl(145, 70%, 25%)' }
+          : { backgroundColor: 'hsl(259, 100%, 12%)', color: 'hsl(259, 100%, 75%)', border: '1px solid hsl(259, 100%, 25%)' }
+      }
+    >
+      <span className="truncate">{copied ? '¡Copiado!' : label}</span>
+    </button>
+  )
+}
+
 function TaskCard({ task, onStatusChange, updating, pendingReview, onPrSubmit, onPrCancel }) {
   const catStyle = CATEGORY_STYLES[task.category] ?? CATEGORY_STYLES.other
   const isPendingReview = pendingReview === task.id
   const [prLink, setPrLink] = useState('')
+  const { branch, prTitle } = suggestBranchAndPr(task)
 
   return (
     <div className="rounded-xl p-4 flex flex-col gap-3" style={{ backgroundColor: 'hsl(224, 25%, 16%)', border: '1px solid hsl(224, 30%, 18%)' }}>
@@ -74,6 +103,12 @@ function TaskCard({ task, onStatusChange, updating, pendingReview, onPrSubmit, o
             PR →
           </a>
         )}
+      </div>
+
+      {/* Branch / PR suggestions */}
+      <div className="flex items-center gap-2 flex-wrap">
+        <CopyChip label={branch} text={branch} />
+        <CopyChip label={prTitle} text={prTitle} />
       </div>
 
       {/* PR link input (shown when transitioning to in_review) */}

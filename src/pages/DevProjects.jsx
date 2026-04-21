@@ -32,11 +32,6 @@ export default function DevProjects() {
   return (
     <Layout>
       <div className="px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Projects</h1>
-          <p className="mt-1 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Access project details and documentation.</p>
-        </div>
-
         {loading && (
           <div className="flex justify-center py-20 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>Loading…</div>
         )}

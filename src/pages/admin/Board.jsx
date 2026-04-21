@@ -1,13 +1,14 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import Layout from '../../components/Layout.jsx'
 import Modal from '../../components/Modal.jsx'
 import { getAllTasks, createTask, updateTask, getTaskComments, createTaskComment } from '../../api/tasks.js'
 import { getProjects } from '../../api/projects.js'
-import { getUsers } from '../../api/users.js'
+import { getUsers, getMentionableUsers } from '../../api/users.js'
 import { getGoals } from '../../api/goals.js'
 import { getSprints } from '../../api/sprints.js'
 import { useAuth } from '../../hooks/useAuth.js'
+import { suggestBranchAndPr } from '../../utils/taskSuggestions.js'
 
 // ── Column definitions ────────────────────────────────────────────────────────
 
@@ -69,6 +70,24 @@ function Field({ label, required, children }) {
   )
 }
 
+// ── Project color ─────────────────────────────────────────────────────────────
+
+const PROJECT_COLORS = [
+  { bg: 'hsl(244, 100%, 69%, 0.15)', text: 'hsl(244, 100%, 80%)' },
+  { bg: 'hsl(187, 100%, 40%, 0.15)', text: 'hsl(187, 100%, 65%)' },
+  { bg: 'hsl(310, 100%, 55%, 0.15)', text: 'hsl(310, 100%, 75%)' },
+  { bg: 'hsl(25,  100%, 55%, 0.15)', text: 'hsl(25,  100%, 70%)' },
+  { bg: 'hsl(145, 70%,  45%, 0.15)', text: 'hsl(145, 70%,  65%)' },
+  { bg: 'hsl(43,  100%, 55%, 0.15)', text: 'hsl(43,  100%, 70%)' },
+  { bg: 'hsl(200, 100%, 50%, 0.15)', text: 'hsl(200, 100%, 70%)' },
+]
+
+function projectColor(name = '') {
+  let h = 0
+  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % PROJECT_COLORS.length
+  return PROJECT_COLORS[Math.abs(h) % PROJECT_COLORS.length]
+}
+
 // ── Task Card ─────────────────────────────────────────────────────────────────
 
 function TaskCard({ task, onClick, onDragStart }) {
@@ -118,7 +137,17 @@ function TaskCard({ task, onClick, onDragStart }) {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-[10px] truncate max-w-[100px]" style={{ color: 'hsl(224, 20%, 55%)' }}>{task.project?.name}</span>
+          {task.project?.name && (() => {
+            const { bg, text } = projectColor(task.project.name)
+            return (
+              <span
+                className="text-[10px] font-medium px-1.5 py-0.5 rounded-md truncate max-w-[100px]"
+                style={{ backgroundColor: bg, color: text }}
+              >
+                {task.project.name}
+              </span>
+            )
+          })()}
           {task.sprint && (
             <span className="shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded-md truncate max-w-[80px]" title={task.sprint.name} style={{ backgroundColor: 'hsl(259, 100%, 15%)', color: 'hsl(259, 100%, 69%)' }}>
               {task.sprint.name}
@@ -227,6 +256,71 @@ function KanbanColumn({ column, tasks, onTaskClick, onNewTask, onDrop, canCreate
   )
 }
 
+// ── Branch / PR suggestion ────────────────────────────────────────────────────
+
+function CopyButton({ text }) {
+  const [copied, setCopied] = useState(false)
+
+  function handleCopy() {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    })
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      className="text-[10px] font-medium px-2 py-0.5 rounded transition-colors shrink-0"
+      style={
+        copied
+          ? { backgroundColor: 'hsl(145, 70%, 10%)', color: 'hsl(145, 70%, 55%)' }
+          : { backgroundColor: 'hsl(224, 30%, 22%)', color: 'hsl(224, 20%, 65%)' }
+      }
+    >
+      {copied ? 'Copiado!' : 'Copiar'}
+    </button>
+  )
+}
+
+function BranchSuggestion({ task }) {
+  const { branch, prTitle } = suggestBranchAndPr(task)
+
+  return (
+    <div className="rounded-lg px-3 py-2.5 space-y-2" style={{ backgroundColor: 'hsl(224, 30%, 18%)' }}>
+      <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: 'hsl(224, 20%, 50%)' }}>
+        Sugerencias de git
+      </p>
+      <div className="flex items-center gap-2">
+        <code className="flex-1 text-xs font-mono truncate" style={{ color: 'hsl(259, 100%, 75%)' }}>{branch}</code>
+        <CopyButton text={branch} />
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="flex-1 text-xs truncate" style={{ color: 'hsl(224, 40%, 80%)' }}>{prTitle}</span>
+        <CopyButton text={prTitle} />
+      </div>
+    </div>
+  )
+}
+
+// ── Comment body with @mention highlighting ───────────────────────────────────
+
+function CommentBody({ body }) {
+  const parts = body.split(/(@\w[\w\s]*?\b)/g)
+  return (
+    <p className="text-xs whitespace-pre-wrap" style={{ color: 'hsl(224, 20%, 70%)' }}>
+      {parts.map((part, i) =>
+        /^@\w/.test(part) ? (
+          <span key={i} style={{ color: 'hsl(259, 100%, 75%)', fontWeight: 600 }}>{part}</span>
+        ) : (
+          part
+        )
+      )}
+    </p>
+  )
+}
+
 // ── Task Detail / Edit Modal ──────────────────────────────────────────────────
 
 function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
@@ -248,6 +342,10 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
   const [comments, setComments]       = useState([])
   const [commentBody, setCommentBody] = useState('')
   const [posting, setPosting]         = useState(false)
+  const [mentionedUserIds, setMentionedUserIds] = useState([])
+  const [mentionQuery, setMentionQuery]         = useState(null) // string after '@', or null
+  const [mentionIndex, setMentionIndex]         = useState(0)
+  const commentRef = useRef(null)
 
   useEffect(() => {
     if (!form.projectId) { setAvailableSprints([]); return }
@@ -257,6 +355,13 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
   useEffect(() => {
     getTaskComments(task.id).then(setComments).catch(() => {})
   }, [task.id])
+
+  const [mentionableUsers, setMentionableUsers] = useState([])
+  useEffect(() => {
+    getMentionableUsers()
+      .then((all) => setMentionableUsers(all.filter((u) => u.id !== currentUser?.id)))
+      .catch(() => {})
+  }, [currentUser?.id])
 
   function set(field, value) {
     if (field === 'projectId') {
@@ -290,14 +395,71 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
     }
   }
 
+  const mentionSuggestions = useMemo(() => {
+    if (mentionQuery === null) return []
+    const q = mentionQuery.toLowerCase()
+    return mentionableUsers.filter((u) => u.name.toLowerCase().includes(q)).slice(0, 6)
+  }, [mentionQuery, mentionableUsers])
+
+  function handleCommentChange(e) {
+    const val = e.target.value
+    setCommentBody(val)
+
+    // Detect '@' trigger: find the last '@' before cursor that hasn't been closed by a space
+    const cursor = e.target.selectionStart
+    const textToCursor = val.slice(0, cursor)
+    const atIdx = textToCursor.lastIndexOf('@')
+    if (atIdx !== -1) {
+      const fragment = textToCursor.slice(atIdx + 1)
+      if (!fragment.includes(' ')) {
+        setMentionQuery(fragment)
+        setMentionIndex(0)
+        return
+      }
+    }
+    setMentionQuery(null)
+  }
+
+  function applyMention(user) {
+    const cursor = commentRef.current?.selectionStart ?? commentBody.length
+    const textToCursor = commentBody.slice(0, cursor)
+    const atIdx = textToCursor.lastIndexOf('@')
+    const before = commentBody.slice(0, atIdx)
+    const after  = commentBody.slice(cursor)
+    const inserted = `@${user.name} `
+    setCommentBody(before + inserted + after)
+    setMentionedUserIds((prev) => prev.includes(user.id) ? prev : [...prev, user.id])
+    setMentionQuery(null)
+    setTimeout(() => {
+      const pos = (before + inserted).length
+      commentRef.current?.setSelectionRange(pos, pos)
+      commentRef.current?.focus()
+    }, 0)
+  }
+
+  function handleCommentKeyDown(e) {
+    if (mentionSuggestions.length > 0) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); setMentionIndex((i) => (i + 1) % mentionSuggestions.length); return }
+      if (e.key === 'ArrowUp')   { e.preventDefault(); setMentionIndex((i) => (i - 1 + mentionSuggestions.length) % mentionSuggestions.length); return }
+      if (e.key === 'Enter' || e.key === 'Tab') { e.preventDefault(); applyMention(mentionSuggestions[mentionIndex]); return }
+      if (e.key === 'Escape') { setMentionQuery(null); return }
+    }
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleAddComment(e)
+    }
+  }
+
   async function handleAddComment(e) {
     e.preventDefault()
     if (!commentBody.trim()) return
     setPosting(true)
     try {
-      const comment = await createTaskComment(task.id, commentBody.trim())
+      const comment = await createTaskComment(task.id, commentBody.trim(), mentionedUserIds)
       setComments((prev) => [...prev, comment])
       setCommentBody('')
+      setMentionedUserIds([])
+      setMentionQuery(null)
     } catch {
       // silently fail
     } finally {
@@ -408,6 +570,8 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
           </Field>
         </div>
 
+        <BranchSuggestion task={{ ...task, title: form.title }} />
+
         {/* Read-only metadata */}
         {(task.goal || task.reviewer) && (
           <div className="rounded-lg px-3 py-2.5 text-xs space-y-1.5" style={{ backgroundColor: 'hsl(224, 30%, 18%)', color: 'hsl(224, 20%, 55%)' }}>
@@ -449,7 +613,7 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
                     {new Date(c.createdAt).toLocaleString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </span>
                 </div>
-                <p className="text-xs whitespace-pre-wrap" style={{ color: 'hsl(224, 20%, 55%)' }}>{c.body}</p>
+                <CommentBody body={c.body} />
               </div>
             </div>
           ))}
@@ -462,20 +626,46 @@ function TaskDetailModal({ task, users, projects, onClose, onSaved }) {
             </span>
           </div>
           <div className="flex-1 flex gap-2">
-            <textarea
-              style={inputStyle}
-              className={`${inputCls} resize-none flex-1`}
-              rows={2}
-              value={commentBody}
-              onChange={(e) => setCommentBody(e.target.value)}
-              placeholder="Agregar comentario… (Enter para enviar)"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault()
-                  handleAddComment(e)
-                }
-              }}
-            />
+            <div className="relative flex-1">
+              <textarea
+                ref={commentRef}
+                style={inputStyle}
+                className={`${inputCls} resize-none w-full`}
+                rows={2}
+                value={commentBody}
+                onChange={handleCommentChange}
+                onKeyDown={handleCommentKeyDown}
+                placeholder="Agregar comentario… (@nombre para mencionar, Enter para enviar)"
+              />
+              {mentionSuggestions.length > 0 && (
+                <div
+                  className="absolute bottom-full mb-1 left-0 w-full rounded-lg overflow-hidden shadow-xl z-50"
+                  style={{ backgroundColor: 'hsl(224, 25%, 16%)', border: '1px solid hsl(224, 30%, 25%)' }}
+                >
+                  {mentionSuggestions.map((u, i) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onMouseDown={(e) => { e.preventDefault(); applyMention(u) }}
+                      className="w-full text-left px-3 py-1.5 text-xs flex items-center gap-2 transition-colors"
+                      style={{
+                        backgroundColor: i === mentionIndex ? 'hsl(244, 100%, 20%)' : 'transparent',
+                        color: i === mentionIndex ? 'hsl(259, 100%, 80%)' : 'hsl(224, 20%, 70%)',
+                      }}
+                    >
+                      <span
+                        className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[9px] font-bold"
+                        style={{ backgroundColor: 'hsl(244, 100%, 69%)', color: 'hsl(224, 30%, 14%)' }}
+                      >
+                        {u.name[0].toUpperCase()}
+                      </span>
+                      <span>{u.name}</span>
+                      <span className="ml-auto capitalize" style={{ color: 'hsl(224, 20%, 45%)' }}>{u.role}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
             <button
               type="submit"
               disabled={posting || !commentBody.trim()}
@@ -785,8 +975,7 @@ export default function Board() {
         <div className="px-8 pt-8 pb-4 shrink-0">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold" style={{ color: 'hsl(224, 40%, 95%)' }}>Board</h1>
-              <p className="mt-0.5 text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>{totalVisible} task{totalVisible !== 1 ? 's' : ''}</p>
+              <p className="text-sm" style={{ color: 'hsl(224, 20%, 55%)' }}>{totalVisible} task{totalVisible !== 1 ? 's' : ''}</p>
             </div>
             {canCreate && (
               <button

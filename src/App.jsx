@@ -13,10 +13,12 @@ import AdminReports from './pages/admin/AdminReports.jsx'
 import AdminReviews from './pages/admin/AdminReviews.jsx'
 import AdminLearning from './pages/admin/AdminLearning.jsx'
 import AdminSprints from './pages/admin/AdminSprints.jsx'
+import AdminOverview from './pages/admin/AdminOverview.jsx'
 import ProjectDetail from './pages/ProjectDetail.jsx'
 import ProjectDocuments from './pages/ProjectDocuments.jsx'
 import DevProjects from './pages/DevProjects.jsx'
 import Profile from './pages/Profile.jsx'
+import Ulai from './pages/Ulai.jsx'
 import LearningMapPage from './features/learning-battles/pages/LearningMapPage.jsx'
 import BattlePage from './features/learning-battles/pages/BattlePage.jsx'
 
@@ -78,7 +80,8 @@ function App() {
           }
         />
 
-        <Route path="/admin" element={<Navigate to="/admin/board" replace />} />
+        <Route path="/admin/overview" element={<AdminRoute><AdminOverview /></AdminRoute>} />
+        <Route path="/admin" element={<Navigate to="/admin/overview" replace />} />
         <Route path="/admin/board" element={<ProtectedRoute allowedRoles={['admin', 'ceo', 'developer', 'designer']}><AdminBoard /></ProtectedRoute>} />
         <Route path="/admin/sprints"  element={<AdminRoute><AdminSprints /></AdminRoute>} />
         <Route path="/admin/projects" element={<AdminRoute><AdminProjects /></AdminRoute>} />
@@ -110,6 +113,15 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['developer', 'designer']}>
               <BattlePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/ulai"
+          element={
+            <ProtectedRoute allowedRoles={['ceo', 'admin', 'developer', 'designer']}>
+              <Ulai />
             </ProtectedRoute>
           }
         />
