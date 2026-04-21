@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { XIcon } from './Icons.jsx'
 import { getNotifications, markNotificationRead, markAllNotificationsRead } from '../api/notifications.js'
 
@@ -49,11 +50,17 @@ function initials(title) {
   return title.slice(0, 2).toUpperCase()
 }
 
-function NotificationItem({ notification, onMarkRead }) {
+function NotificationItem({ notification, onMarkRead, onNavigate }) {
   const color = TYPE_COLORS[notification.type] ?? 'hsl(224, 20%, 55%)'
+
+  function handleClick() {
+    if (!notification.read) onMarkRead(notification.id)
+    if (notification.link) onNavigate(notification.link)
+  }
+
   return (
     <button
-      onClick={() => !notification.read && onMarkRead(notification.id)}
+      onClick={handleClick}
       className="w-full text-left flex items-start gap-3 px-5 py-3.5 transition-colors hover:bg-white/[0.03] cursor-pointer"
     >
       <div
@@ -85,6 +92,7 @@ function NotificationItem({ notification, onMarkRead }) {
 }
 
 export default function NotificationPanel({ open, onClose, onUnreadChange }) {
+  const navigate = useNavigate()
   const [tab, setTab] = useState('all')
   const [notifications, setNotifications] = useState([])
 
@@ -115,6 +123,11 @@ export default function NotificationPanel({ open, onClose, onUnreadChange }) {
   async function markAllRead() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })))
     try { await markAllNotificationsRead() } catch { /* silent */ }
+  }
+
+  function handleNavigate(link) {
+    onClose()
+    navigate(link)
   }
 
   const filtered = notifications.filter((n) => {
@@ -211,7 +224,7 @@ export default function NotificationPanel({ open, onClose, onUnreadChange }) {
               <p className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(224, 20%, 40%)' }}>
                 Hoy
               </p>
-              {hoy.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} />)}
+              {hoy.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} onNavigate={handleNavigate} />)}
             </div>
           )}
 
@@ -220,7 +233,7 @@ export default function NotificationPanel({ open, onClose, onUnreadChange }) {
               <p className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(224, 20%, 40%)' }}>
                 Ayer
               </p>
-              {ayer.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} />)}
+              {ayer.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} onNavigate={handleNavigate} />)}
             </div>
           )}
 
@@ -229,7 +242,7 @@ export default function NotificationPanel({ open, onClose, onUnreadChange }) {
               <p className="px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider" style={{ color: 'hsl(224, 20%, 40%)' }}>
                 Antes
               </p>
-              {antes.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} />)}
+              {antes.map((n) => <NotificationItem key={n.id} notification={n} onMarkRead={markRead} onNavigate={handleNavigate} />)}
             </div>
           )}
         </div>
